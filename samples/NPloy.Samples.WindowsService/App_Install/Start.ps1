@@ -1,0 +1,1 @@
+﻿& .\NPloy.Samples.WindowsService.exe start

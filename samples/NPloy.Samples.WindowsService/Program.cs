@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Timers;
 using Topshelf;
 
@@ -9,6 +10,8 @@ namespace NPloy.Samples.WindowsService
         readonly Timer _timer;
         public TownCrier()
         {
+            Console.WriteLine("appSetting1: "+ConfigurationManager.AppSettings["appSetting1"]);
+            Console.WriteLine("connectionString1: " + ConfigurationManager.ConnectionStrings["connectionString1"]);
             _timer = new Timer(1000) { AutoReset = true };
             _timer.Elapsed += (sender, eventArgs) => Console.WriteLine("It is {0} an all is well", DateTime.Now);
         }

@@ -1,2 +1,2 @@
-﻿& .\NPloy.Samples.WindowsService.exe install
-& .\NPloy.Samples.WindowsService.exe start
+﻿Param($ServiceUsername, $ServicePassword)
+& .\NPloy.Samples.WindowsService.exe install -u $ServiceUsername -p $ServicePassword

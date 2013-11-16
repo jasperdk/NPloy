@@ -1,0 +1,13 @@
+-copy environmentspecific files
+-Transform configs 
+- replace with environment variables
+- call all install scripts
+- call all start scripts
+
+- call all stop scripts
+- call all uninstall scripts
+- store what has been installed
+- remove unused packages
+- create infrastructure package
+- create fluent migrate plugin
+- create dashboard

@@ -7,6 +7,19 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NPloy.Samples.Migrations", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NPloy.Samples.Web", "NPloy.Samples.Web\NPloy.Samples.Web.csproj", "{11498B5C-7125-4F71-A997-0FCBB2123BE9}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Configuration", "Configuration", "{5C4F3477-8A16-4840-BC99-470D488FC704}"
+	ProjectSection(SolutionItems) = preProject
+		configuration\localhost.ps1 = configuration\localhost.ps1
+		configuration\prodappserver.ps1 = configuration\prodappserver.ps1
+		configuration\prodwebserver.ps1 = configuration\prodwebserver.ps1
+		configuration\testserver.ps1 = configuration\testserver.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0835429E-6FD6-4B2F-8B22-3432D5B04883}"
+	ProjectSection(SolutionItems) = preProject
+		todo.list = todo.list
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
