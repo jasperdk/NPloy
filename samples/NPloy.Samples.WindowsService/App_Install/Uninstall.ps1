@@ -1,1 +1,1 @@
-﻿
+﻿& .\NPloy.Samples.WindowsService.exe uninstall
