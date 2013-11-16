@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NPloy.Samples.WindowsService", "NPloy.Samples.WindowsService\NPloy.Samples.WindowsService.csproj", "{F2BC7674-9130-4DE2-BF7F-FA8DE31D908A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NPloy.Samples.Migrations", "NPloy.Samples.Migrations\NPloy.Samples.Migrations.csproj", "{436FBBFF-F29E-44A0-9AC0-1CA37E0AAF52}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NPloy.Samples.Web", "NPloy.Samples.Web\NPloy.Samples.Web.csproj", "{11498B5C-7125-4F71-A997-0FCBB2123BE9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F2BC7674-9130-4DE2-BF7F-FA8DE31D908A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2BC7674-9130-4DE2-BF7F-FA8DE31D908A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2BC7674-9130-4DE2-BF7F-FA8DE31D908A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2BC7674-9130-4DE2-BF7F-FA8DE31D908A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{436FBBFF-F29E-44A0-9AC0-1CA37E0AAF52}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{436FBBFF-F29E-44A0-9AC0-1CA37E0AAF52}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{436FBBFF-F29E-44A0-9AC0-1CA37E0AAF52}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{436FBBFF-F29E-44A0-9AC0-1CA37E0AAF52}.Release|Any CPU.Build.0 = Release|Any CPU
+		{11498B5C-7125-4F71-A997-0FCBB2123BE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11498B5C-7125-4F71-A997-0FCBB2123BE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11498B5C-7125-4F71-A997-0FCBB2123BE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11498B5C-7125-4F71-A997-0FCBB2123BE9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
