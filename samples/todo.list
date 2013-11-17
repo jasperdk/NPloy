@@ -1,6 +1,8 @@
+- Write tests
 - copy environmentspecific files
-- Transform configs 
 - replace with environment variables
+- Create NuGet server with promotion
+- Transform configs 
 - remove unused packages
 - create infrastructure package
 - create fluent migrate plugin

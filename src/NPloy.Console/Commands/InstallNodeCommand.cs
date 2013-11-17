@@ -8,54 +8,67 @@ namespace NPloy.Commands
 {
     public class InstallNodeCommand : ConsoleCommand
     {
+        public const string PackageFileName = "packages.config";
         public InstallNodeCommand()
+            : this(new InstallRoleCommand())
+        {
+        }
+
+        public InstallNodeCommand(IInstallRoleCommand installRoleCommand)
         {
             IsCommand("InstallNode", "InstallNode");
             HasAdditionalArguments(1, "Node");
             HasOption("d|directory=", "Install to this directory", s => WorkingDirectory = s);
+            _installRoleCommand = installRoleCommand;
         }
 
         public string Node;
         public string WorkingDirectory;
+        private readonly IInstallRoleCommand _installRoleCommand;
 
         public override int Run(string[] remainingArguments)
         {
-            if (File.Exists("packages.config"))
+            if (File.Exists(PackageFileName))
             {
                 Console.Write("Node has already been installed. Uninstall or update!");
                 return -1;
             }
 
-            File.Delete("packages.config");
+            HandleArguments(remainingArguments);
 
-            var roles = new List<string>();
+            File.Delete(PackageFileName);
 
-            Node = remainingArguments[0];
-            if (Node.ToLower().EndsWith(".node") && File.Exists(Node))
-            {
-                var doc = new XmlDocument();
-                doc.Load(Node);
-                var docRoles = doc.GetElementsByTagName("role");
-                foreach (XmlNode docRole in docRoles)
-                {
-                    roles.Add(docRole.Attributes["name"].Value);
-                }
-            }
-            else
-            {
-                roles.Add(Node);
-            }
+            if (!File.Exists(Node))
+                throw new FileNotFoundException(Node);
 
+            var roles = GetRolesFromFile();
             foreach (var role in roles)
             {
-                var installRoleCommand = new InstallRoleCommand { WorkingDirectory = WorkingDirectory };
-                if (role.ToLower().EndsWith(".role"))
-                    installRoleCommand.Run(new[] { @"roles\" + role });
-                else
-                   installRoleCommand.Run(new[] { role });
+                _installRoleCommand.Run(new[] { @"roles\" + role });
             }
 
             return 0;
         }
+
+        private void HandleArguments(string[] remainingArguments)
+        {
+            _installRoleCommand.WorkingDirectory = WorkingDirectory;
+            Node = remainingArguments[0];
+        }
+
+        private IEnumerable<string> GetRolesFromFile()
+        {
+            var roles = new List<string>();
+            var doc = new XmlDocument();
+            doc.Load(Node);
+            var docRoles = doc.GetElementsByTagName("role");
+            foreach (XmlNode docRole in docRoles)
+            {
+                roles.Add(docRole.Attributes["name"].Value);
+            }
+            return roles;
+        }
     }
+
+
 }

@@ -7,7 +7,13 @@ using ManyConsole;
 
 namespace NPloy.Commands
 {
-    public class InstallRoleCommand : ConsoleCommand
+    public interface IInstallRoleCommand
+    {
+        int Run(string[] remainingArguments);
+        string WorkingDirectory { get; set; }
+    }
+
+    public class InstallRoleCommand : ConsoleCommand, IInstallRoleCommand
     {
         public InstallRoleCommand()
         {
@@ -17,7 +23,7 @@ namespace NPloy.Commands
         }
 
         public string Role;
-        public string WorkingDirectory;
+        public string WorkingDirectory { get; set; }
 
         public override int Run(string[] remainingArguments)
         {
