@@ -1,0 +1,64 @@
+﻿@using System.Configuration
+@{
+    ViewBag.Title = "Home Page";
+}
+@section featured {
+    <section class="featured">
+        <div class="content-wrapper">
+            <hgroup class="title">
+                <h1>@ViewBag.Title.</h1>
+                <h2>@ViewBag.Message</h2>
+            </hgroup>
+            <p>
+                To learn more about NPloy visit
+                <a href="https://github.com/jasperdk/NPloy" title="NPloy on GitHub">https://github.com/jasperdk/NPloy</a>.
+            </p>
+        </div>
+    </section>
+}
+<h3>We suggest the following:</h3>
+<ol class="round">
+    <li class="one">
+        <h5>Getting Started</h5>
+    </li>
+
+    <li class="two">
+        <h2>You are running NuGet.Server v @typeof(NuGet.Server.DataServices.Package).Assembly.GetName().Version </h2>
+        <p>
+            Click <a href="@VirtualPathUtility.ToAbsolute("~/nuget/Packages")">here</a> to view your packages.
+        </p>
+        <fieldset style="width: 800px">
+            <legend><strong>Repository URLs</strong></legend>
+            In the package manager settings, add the following URL to the list of 
+            Package Sources:
+            <blockquote>
+                <strong>@Helpers.GetRepositoryUrl(Request.Url, Request.ApplicationPath)</strong>
+            </blockquote>
+            @{
+
+                if (String.IsNullOrEmpty(ConfigurationManager.AppSettings["apiKey"]))
+                {
+                    @:To enable pushing packages to this feed using the nuget command line tool (nuget.exe). Set the api key appSetting in web.config.
+                }
+                else
+                {
+                    @:Use the command below to push packages to this feed using the nuget command line tool (nuget.exe).
+                }
+            }
+            <blockquote>
+                <strong>nuget push {package file} -s @Helpers.GetPushUrl(Request.Url, Request.ApplicationPath) {apikey}</strong>
+            </blockquote>
+        </fieldset>
+
+        @{
+            if (Request.IsLocal)
+            {
+                <p style="font-size: 1.1em">
+                    To add packages to the feed put package files (.nupkg files) in the folder "@NuGet.Server.Infrastructure.PackageUtility.PackagePhysicalPath".
+                </p>
+            }
+        }
+    </li>
+
+    <li class="three"></li>
+</ol>

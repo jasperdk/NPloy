@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!--This file represents the results of running a test suite-->
+<test-results name="D:\projects\privat\NPloy\src\NPloy.Console.UnitTests\bin\debug\NPloy.Console.UnitTests.dll" total="4" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2013-11-17" time="18:22:05">
+  <environment nunit-version="2.6.3.13283" clr-version="2.0.50727.5472" os-version="Microsoft Windows NT 6.1.7601 Service Pack 1" platform="Win32NT" cwd="D:\projects\privat\NPloy\src" machine-name="PCR9TVYHA" user="DK1288" user-domain="FALCK" />
+  <culture-info current-culture="da-DK" current-uiculture="en-US" />
+  <test-suite type="Assembly" name="D:\projects\privat\NPloy\src\NPloy.Console.UnitTests\bin\debug\NPloy.Console.UnitTests.dll" executed="True" result="Success" success="True" time="3.365" asserts="0">
+    <results>
+      <test-suite type="Namespace" name="NPloy" executed="True" result="Success" success="True" time="3.319" asserts="0">
+        <results>
+          <test-suite type="Namespace" name="Console" executed="True" result="Success" success="True" time="3.318" asserts="0">
+            <results>
+              <test-suite type="Namespace" name="UnitTests" executed="True" result="Success" success="True" time="3.318" asserts="0">
+                <results>
+                  <test-suite type="Namespace" name="Commands" executed="True" result="Success" success="True" time="3.317" asserts="0">
+                    <results>
+                      <test-suite type="TestFixture" name="InstallNodeCommandTests" executed="True" result="Success" success="True" time="3.311" asserts="0">
+                        <results>
+                          <test-case name="NPloy.Console.UnitTests.Commands.InstallNodeCommandTests.Run_WhenArgumentFileDoesNotExists_ShouldThrowException" executed="True" result="Success" success="True" time="1.701" asserts="1" />
+                          <test-case name="NPloy.Console.UnitTests.Commands.InstallNodeCommandTests.Run_WhenArgumentIsNodeFile_ShouldInstallAllRoles" executed="True" result="Success" success="True" time="1.503" asserts="0" />
+                          <test-case name="NPloy.Console.UnitTests.Commands.InstallNodeCommandTests.Run_WhenArgumentIsNodeFile_ShouldReturn0" executed="True" result="Success" success="True" time="0.042" asserts="1" />
+                          <test-case name="NPloy.Console.UnitTests.Commands.InstallNodeCommandTests.Run_WhenPackageFileExists_ShouldReturnMinus1AndNotCallCommand" executed="True" result="Success" success="True" time="0.015" asserts="1" />
+                        </results>
+                      </test-suite>
+                    </results>
+                  </test-suite>
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+    </results>
+  </test-suite>
+</test-results>

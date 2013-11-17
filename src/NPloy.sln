@@ -11,8 +11,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NPloy.Console.UnitTests", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{620BEDB8-1FF9-47FA-BA35-7BBAFA14F91F}"
 	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
 		.nuget\packages.config = .nuget\packages.config
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{9F74C177-F047-42AA-B20A-1C2B4E1D0BFC}"
+	ProjectSection(SolutionItems) = preProject
+		default.ps1 = default.ps1
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NPloy.Web", "NPloy.Web\NPloy.Web.csproj", "{B99F574E-5A28-4410-BA53-DDF79ECF44C1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,6 +42,10 @@ Global
 		{A3B3D515-5D61-4DFD-AA70-84590F4DB8FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A3B3D515-5D61-4DFD-AA70-84590F4DB8FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A3B3D515-5D61-4DFD-AA70-84590F4DB8FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B99F574E-5A28-4410-BA53-DDF79ECF44C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B99F574E-5A28-4410-BA53-DDF79ECF44C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B99F574E-5A28-4410-BA53-DDF79ECF44C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B99F574E-5A28-4410-BA53-DDF79ECF44C1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

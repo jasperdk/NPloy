@@ -17,6 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Configuration", "Configurat
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0835429E-6FD6-4B2F-8B22-3432D5B04883}"
 	ProjectSection(SolutionItems) = preProject
+		default.ps1 = default.ps1
 		todo.list = todo.list
 	EndProjectSection
 EndProject
