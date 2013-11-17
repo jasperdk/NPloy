@@ -12,7 +12,16 @@ namespace NPloy
 
 
             // then run them.
-            return ConsoleCommandDispatcher.DispatchCommand(commands, args, System.Console.Out);
+            try
+            {
+                return ConsoleCommandDispatcher.DispatchCommand(commands, args, System.Console.Out);
+            }
+            catch (ConsoleException e)
+            {
+
+                return e.ExitCode;
+            }
+            
         }
 
 

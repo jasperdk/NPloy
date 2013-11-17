@@ -1,17 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text.RegularExpressions;
-using System.Xml;
 using ManyConsole;
 
-namespace NPloy
+namespace NPloy.Commands
 {
-    public class InstallPackageCommand : ConsoleCommand
+    public class StartPackageCommand : ConsoleCommand
     {
-        public InstallPackageCommand()
+        public StartPackageCommand()
         {
-            IsCommand("InstallPackage", "InstallRole");
+            IsCommand("StartPackage", "StartPackage");
             HasAdditionalArguments(1, "Package");
         }
 
@@ -26,7 +22,7 @@ namespace NPloy
                 StartInfo =
                 {
                     FileName = @"powershell",
-                    Arguments =@"App_install\Install.ps1",
+                    Arguments =@"App_Install\Start.ps1",
                     UseShellExecute = false,
                     RedirectStandardOutput = true
                 }
@@ -38,7 +34,8 @@ namespace NPloy
             string strOutput = pProcess.StandardOutput.ReadToEnd();
             Console.Write(strOutput);
             pProcess.WaitForExit();
-            
+            if (pProcess.ExitCode != 0)
+               throw new ConsoleException(pProcess.ExitCode);
             return 0;
         }
     }

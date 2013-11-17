@@ -47,9 +47,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="InstallPackage.cs" />
-    <Compile Include="InstallNodeCommand.cs" />
-    <Compile Include="InstallRoleCommand.cs" />
+    <Compile Include="Commands\UninstallPackage.cs" />
+    <Compile Include="ConsoleException.cs" />
+    <Compile Include="Commands\StopPackage.cs" />
+    <Compile Include="Commands\UninstallNodeCommand.cs" />
+    <Compile Include="Commands\StartPackage.cs" />
+    <Compile Include="Commands\InstallPackage.cs" />
+    <Compile Include="Commands\InstallNodeCommand.cs" />
+    <Compile Include="Commands\InstallRoleCommand.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

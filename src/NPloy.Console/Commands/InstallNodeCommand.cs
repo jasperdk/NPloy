@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using ManyConsole;
 
-namespace NPloy
+namespace NPloy.Commands
 {
     public class InstallNodeCommand : ConsoleCommand
     {
@@ -19,6 +20,14 @@ namespace NPloy
 
         public override int Run(string[] remainingArguments)
         {
+            if (File.Exists("packages.config"))
+            {
+                Console.Write("Node has already been installed. Uninstall or update!");
+                return -1;
+            }
+
+            File.Delete("packages.config");
+
             var roles = new List<string>();
 
             Node = remainingArguments[0];
@@ -43,7 +52,7 @@ namespace NPloy
                 if (role.ToLower().EndsWith(".role"))
                     installRoleCommand.Run(new[] { @"roles\" + role });
                 else
-                    installRoleCommand.Run(new[] { role });
+                   installRoleCommand.Run(new[] { role });
             }
 
             return 0;
