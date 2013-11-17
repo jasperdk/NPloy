@@ -9,10 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NPloy.Samples.Web", "NPloy.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Configuration", "Configuration", "{5C4F3477-8A16-4840-BC99-470D488FC704}"
 	ProjectSection(SolutionItems) = preProject
-		configuration\localhost.ps1 = configuration\localhost.ps1
-		configuration\prodappserver.ps1 = configuration\prodappserver.ps1
-		configuration\prodwebserver.ps1 = configuration\prodwebserver.ps1
-		configuration\testserver.ps1 = configuration\testserver.ps1
+		configuration\localhost.node = configuration\localhost.node
+		configuration\prodappserver.node = configuration\prodappserver.node
+		configuration\prodwebserver.node = configuration\prodwebserver.node
+		configuration\testserver.node = configuration\testserver.node
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0835429E-6FD6-4B2F-8B22-3432D5B04883}"

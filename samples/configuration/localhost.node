@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<node environment="dev">
+	<roles>
+		<role name="service-packages.role" />
+		<!--<role name="NPloy.Samples.Web" />-->
+	</roles>
+</node>
