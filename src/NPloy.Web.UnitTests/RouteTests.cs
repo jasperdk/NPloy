@@ -32,7 +32,7 @@ namespace NPloy.Web.UnitTests
             Assert.That(route.Action, Is.EqualTo("Search"));
         }
 
-        [TestCase("http://localhost/odata/packages")]
+        [TestCase("http://localhost/odata/packages"), Ignore("Web is WIP")]
         public void ShouldResolveOdataRoutes(string uri)
         {
             // setups

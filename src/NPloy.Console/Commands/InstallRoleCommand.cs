@@ -11,6 +11,8 @@ namespace NPloy.Commands
     {
         int Run(string[] remainingArguments);
         string WorkingDirectory { get; set; }
+        string Role { get; set; }
+        string Environment { get; set; }
     }
 
     public class InstallRoleCommand : ConsoleCommand, IInstallRoleCommand
@@ -20,30 +22,33 @@ namespace NPloy.Commands
             IsCommand("InstallRole", "InstallRole");
             HasAdditionalArguments(1, "Role");
             HasOption("d|directory=", "Deploy to this directory", s => WorkingDirectory = s);
+            HasOption("e|environment=", "Deploy to this directory", s => Environment = s);
         }
 
-        public string Role;
+        public string Role { get; set; }
+        public string Environment { get; set; }
         public string WorkingDirectory { get; set; }
 
         public override int Run(string[] remainingArguments)
         {
             var packages = new List<string>();
+            var roleFile =  @".nploy\roles\" + Role;
 
-            Role = remainingArguments[0];
-            if (Role.ToLower().EndsWith(".role") && File.Exists(Role))
+            if (Role.ToLower().EndsWith(".role") && File.Exists(roleFile))
             {
                 Console.WriteLine("Installing role: " + Role);
                 var doc = new XmlDocument();
-                doc.Load(Role);
+                doc.Load(roleFile);
                 var docPackages = doc.GetElementsByTagName("package");
                 foreach (XmlNode docPackage in docPackages)
                 {
+                    Console.WriteLine("Package to install: " + docPackage.Attributes["id"].Value);
                     packages.Add(docPackage.Attributes["id"].Value);
                 }
-
             }
             else
             {
+                Console.WriteLine("Package to install: " + Role);
                 packages.Add(Role);
             }
 
@@ -118,7 +123,7 @@ namespace NPloy.Commands
                 var exitCode = installPackageCommand.Run(new string[0]);
                 if (exitCode != 0)
                     throw new ConsoleException(exitCode);
-                using (StreamWriter sw = File.AppendText(WorkingDirectory+@"\packages.config"))
+                using (StreamWriter sw = File.AppendText(WorkingDirectory + @"\packages.config"))
                 {
                     sw.WriteLine(installedPackage);
                 }

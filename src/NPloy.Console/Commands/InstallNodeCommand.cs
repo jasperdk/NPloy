@@ -28,7 +28,9 @@ namespace NPloy.Commands
 
         public override int Run(string[] remainingArguments)
         {
-            if (File.Exists(PackageFileName))
+            var packageFileName = !string.IsNullOrEmpty(WorkingDirectory) ? WorkingDirectory + @"\" + PackageFileName : PackageFileName;
+
+            if (File.Exists(packageFileName))
             {
                 Console.WriteLine("Node has already been installed. Uninstall or update!");
                 return -1;
@@ -36,23 +38,35 @@ namespace NPloy.Commands
 
             HandleArguments(remainingArguments);
 
-            File.Delete(PackageFileName);
-
             if (!Node.ToLower().EndsWith(".node"))
                 Node += ".node";
             if (!File.Exists(Node))
                 throw new FileNotFoundException(Node);
 
             Console.WriteLine("Installing node: " + Node);
-            var basePath = Path.GetDirectoryName(Node);
             var roles = GetRolesFromFile();
+            string environment=GetEnvironmentFromFile();
             foreach (var role in roles)
             {
                 _installRoleCommand.WorkingDirectory = WorkingDirectory;
-                _installRoleCommand.Run(new[] { basePath + @"\roles\" + role });
+                _installRoleCommand.Role = role;
+                _installRoleCommand.Environment = environment;
+                _installRoleCommand.Run(new string[0]);
             }
 
             return 0;
+        }
+
+        private string GetEnvironmentFromFile()
+        {
+            var doc = new XmlDocument();
+            doc.Load(Node);
+            var docNodes = doc.GetElementsByTagName("node");
+            var node = docNodes.Item(0);
+           
+            if(node!=null)
+                return node.Attributes["environment"].Value;
+            return "";
         }
 
         private void HandleArguments(string[] remainingArguments)

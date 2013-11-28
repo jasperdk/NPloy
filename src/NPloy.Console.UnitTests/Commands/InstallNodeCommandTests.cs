@@ -17,7 +17,7 @@ namespace NPloy.Console.UnitTests.Commands
             _installRoleCommandMock = new Mock<IInstallRoleCommand>();
             _command = new InstallNodeCommand(_installRoleCommandMock.Object);
 
-            if(File.Exists(InstallNodeCommand.PackageFileName))
+            if (File.Exists(InstallNodeCommand.PackageFileName))
                 File.Delete(InstallNodeCommand.PackageFileName);
         }
 
@@ -35,6 +35,48 @@ namespace NPloy.Console.UnitTests.Commands
         }
 
         [Test]
+        public void Run_WhenArgumentIsNodeFile_ShouldInstall()
+        {
+            // Arrange
+            CreateNodeFile("test.node", "test1.role");
+
+            // Act
+            _command.Run(new[] { "test.node" });
+
+            // Assert
+            _installRoleCommandMock.VerifySet(c => c.Role = "test1.role", Times.Once());
+            _installRoleCommandMock.Verify(c => c.Run(new string[0]), Times.Once());
+        }
+
+        [Test]
+        public void Run_WhenArgumentIsNodeFileWithoutFileExtension_ShouldInstall()
+        {
+            // Arrange
+            CreateNodeFile("test.node", "test1.role");
+
+            // Act
+            _command.Run(new[] { "test" });
+
+            // Assert
+            _installRoleCommandMock.VerifySet(c => c.Role = "test1.role", Times.Once());
+            _installRoleCommandMock.Verify(c => c.Run(new string[0]), Times.Once());
+        }
+
+        [Test]
+        public void Run_ShouldPassOnEnvironment()
+        {
+            // Arrange
+            CreateNodeFileForEnvironment("test.node","test", "test1.role");
+
+            // Act
+            _command.Run(new[] { "test.node" });
+
+            // Assert
+            _installRoleCommandMock.VerifySet(c => c.Environment = "test", Times.Once());
+        }
+
+
+        [Test]
         public void Run_WhenArgumentIsNodeFile_ShouldInstallAllRoles()
         {
             // Arrange
@@ -44,8 +86,9 @@ namespace NPloy.Console.UnitTests.Commands
             _command.Run(new[] { "test.node" });
 
             // Assert
-            _installRoleCommandMock.Verify(c => c.Run(It.Is<string[]>(s => s[0] == @"roles\test1.role")), Times.Once());
-            _installRoleCommandMock.Verify(c => c.Run(It.Is<string[]>(s => s[0] == @"roles\test2.role")), Times.Once());
+            _installRoleCommandMock.VerifySet(c => c.Role = "test1.role", Times.Once());
+            _installRoleCommandMock.VerifySet(c => c.Role = "test2.role", Times.Once());
+            _installRoleCommandMock.Verify(c => c.Run(new string[0]), Times.Exactly(2));
         }
 
         [Test]
@@ -64,13 +107,18 @@ namespace NPloy.Console.UnitTests.Commands
             var result = _command.Run(new[] { "test.node" });
 
             // Assert
-            Assert.That(result , Is.EqualTo(-1));
-            _installRoleCommandMock.Verify(c=>c.Run(It.IsAny<string[]>()),Times.Never);
+            Assert.That(result, Is.EqualTo(-1));
+            _installRoleCommandMock.Verify(c => c.Run(It.IsAny<string[]>()), Times.Never);
         }
 
         private static void CreateNodeFile(string node, params string[] roles)
         {
-            var content = @"<?xml version=""1.0"" encoding=""utf-8""?><node><roles>";
+           CreateNodeFileForEnvironment(node,"dev",roles);
+        }
+
+        private static void CreateNodeFileForEnvironment(string node, string enviroment, params string[] roles)
+        {
+            var content = string.Format(@"<?xml version=""1.0"" encoding=""utf-8""?><node environment=""{0}""><roles>", enviroment);
             foreach (var role in roles)
             {
                 content += @"<role name=""" + role + @""" />";

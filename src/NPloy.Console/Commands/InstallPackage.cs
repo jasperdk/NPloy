@@ -46,7 +46,7 @@ namespace NPloy.Commands
             }
 
             Package = Package.Replace(' ', '.');
-            
+           
             var pProcess = new System.Diagnostics.Process
                 {
                     StartInfo =
