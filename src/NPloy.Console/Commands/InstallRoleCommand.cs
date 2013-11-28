@@ -32,6 +32,7 @@ namespace NPloy.Commands
             Role = remainingArguments[0];
             if (Role.ToLower().EndsWith(".role") && File.Exists(Role))
             {
+                Console.WriteLine("Installing role: " + Role);
                 var doc = new XmlDocument();
                 doc.Load(Role);
                 var docPackages = doc.GetElementsByTagName("package");
@@ -46,14 +47,14 @@ namespace NPloy.Commands
                 packages.Add(Role);
             }
 
-            var installedPackages = InstallPackages(packages);
-            RunInstallForPackages(installedPackages);
+            var installedPackages = NugetInstallPackages(packages);
+            InstallPackages(installedPackages);
             StartPackages(installedPackages);
-            
+
             return 0;
         }
 
-        private List<string> InstallPackages(IEnumerable<string> packages)
+        private List<string> NugetInstallPackages(IEnumerable<string> packages)
         {
             var installedPackages = new List<string>();
             foreach (var package in packages)
@@ -63,7 +64,7 @@ namespace NPloy.Commands
                         StartInfo =
                             {
                                 FileName = "nuget",
-                                Arguments = string.Format("install {0}", package),
+                                Arguments = string.Format(@"install {0} -OutputDirectory {1} -Source d:\install\packages", package, WorkingDirectory),
                                 UseShellExecute = false,
                                 RedirectStandardOutput = true
                             }
@@ -88,36 +89,39 @@ namespace NPloy.Commands
                     }
                 }
                 pProcess.WaitForExit();
-                if (pProcess.ExitCode != 0)
+                if (pProcess.ExitCode > 1)
                     throw new ConsoleException(pProcess.ExitCode);
             }
             return installedPackages;
         }
 
-        private static void StartPackages(IEnumerable<string> installedPackages)
+        private void StartPackages(IEnumerable<string> installedPackages)
         {
             foreach (var installedPackage in installedPackages)
             {
                 var startPackageCommand = new StartPackageCommand();
-                var exitCode = startPackageCommand.Run(new[] {installedPackage});
+                startPackageCommand.WorkingDirectory = WorkingDirectory;
+                startPackageCommand.Package = installedPackage;
+                var exitCode = startPackageCommand.Run(new[] { installedPackage });
                 if (exitCode != 0)
                     throw new ConsoleException(exitCode);
             }
         }
 
-        private static void RunInstallForPackages(IEnumerable<string> installedPackages)
+        private void InstallPackages(IEnumerable<string> installedPackages)
         {
             foreach (var installedPackage in installedPackages)
             {
-                Console.WriteLine("Installed package: " + installedPackage);
                 var installPackageCommand = new InstallPackageCommand();
-                var exitCode = installPackageCommand.Run(new[] {installedPackage});
+                installPackageCommand.WorkingDirectory = WorkingDirectory;
+                installPackageCommand.Package = installedPackage;
+                var exitCode = installPackageCommand.Run(new string[0]);
                 if (exitCode != 0)
                     throw new ConsoleException(exitCode);
-                using (StreamWriter sw = File.AppendText("packages.config"))
+                using (StreamWriter sw = File.AppendText(WorkingDirectory+@"\packages.config"))
                 {
                     sw.WriteLine(installedPackage);
-                }	
+                }
             }
         }
     }

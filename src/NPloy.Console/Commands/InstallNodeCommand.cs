@@ -30,7 +30,7 @@ namespace NPloy.Commands
         {
             if (File.Exists(PackageFileName))
             {
-                Console.Write("Node has already been installed. Uninstall or update!");
+                Console.WriteLine("Node has already been installed. Uninstall or update!");
                 return -1;
             }
 
@@ -38,13 +38,18 @@ namespace NPloy.Commands
 
             File.Delete(PackageFileName);
 
+            if (!Node.ToLower().EndsWith(".node"))
+                Node += ".node";
             if (!File.Exists(Node))
                 throw new FileNotFoundException(Node);
 
+            Console.WriteLine("Installing node: " + Node);
+            var basePath = Path.GetDirectoryName(Node);
             var roles = GetRolesFromFile();
             foreach (var role in roles)
             {
-                _installRoleCommand.Run(new[] { @"roles\" + role });
+                _installRoleCommand.WorkingDirectory = WorkingDirectory;
+                _installRoleCommand.Run(new[] { basePath + @"\roles\" + role });
             }
 
             return 0;

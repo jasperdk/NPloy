@@ -9,14 +9,16 @@ namespace NPloy.Commands
         {
             IsCommand("StopPackage", "StopPackage");
             HasAdditionalArguments(1, "Package");
+            HasOption("d|directory=", "Stop in this directory", s => WorkingDirectory = s);
         }
 
         public string Package;
 
+        public string WorkingDirectory { get; set; }
+
         public override int Run(string[] remainingArguments)
         {
-
-            Package = remainingArguments[0];
+            Package = Package.Replace(' ', '.');
             var pProcess = new System.Diagnostics.Process
             {
                 StartInfo =
@@ -24,11 +26,10 @@ namespace NPloy.Commands
                     FileName = @"powershell",
                     Arguments =@"App_Install\Stop.ps1",
                     UseShellExecute = false,
-                    RedirectStandardOutput = true
+                    RedirectStandardOutput = true,
+                    WorkingDirectory = WorkingDirectory + @"\" + Package
                 }
             };
-
-            pProcess.StartInfo.WorkingDirectory = Package.Replace(' ', '.');
 
             pProcess.Start();
             string strOutput = pProcess.StandardOutput.ReadToEnd();

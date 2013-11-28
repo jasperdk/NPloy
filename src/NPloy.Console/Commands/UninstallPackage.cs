@@ -9,14 +9,17 @@ namespace NPloy.Commands
         {
             IsCommand("UninstallPackage", "UninstallPackage");
             HasAdditionalArguments(1, "Package");
+            HasOption("d|directory=", "Uninstall from this directory", s => WorkingDirectory = s);
         }
 
         public string Package;
 
+        public string WorkingDirectory { get; set; }
+
         public override int Run(string[] remainingArguments)
         {
 
-            Package = remainingArguments[0];
+            Package = Package.Replace(' ', '.');
             var pProcess = new System.Diagnostics.Process
             {
                 StartInfo =
@@ -24,11 +27,10 @@ namespace NPloy.Commands
                     FileName = @"powershell",
                     Arguments =@"App_install\Uninstall.ps1",
                     UseShellExecute = false,
-                    RedirectStandardOutput = true
+                    RedirectStandardOutput = true,
+                    WorkingDirectory = WorkingDirectory+@"\"+Package
                 }
             };
-
-            pProcess.StartInfo.WorkingDirectory = Package.Replace(' ', '.');
 
             pProcess.Start();
             string strOutput = pProcess.StandardOutput.ReadToEnd();
