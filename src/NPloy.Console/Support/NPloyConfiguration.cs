@@ -7,6 +7,7 @@ namespace NPloy.Support
     {
         IList<string> GetFiles(string s);
         Dictionary<string,string> GetProperties(string environment);
+        bool FileExists(string filePath);
     }
 
     public class NPloyConfiguration:INPloyConfiguration
@@ -28,6 +29,11 @@ namespace NPloy.Support
                 result.Add(key, value);
             }
             return result;
+        }
+
+        public bool FileExists(string filePath)
+        {
+            return File.Exists(filePath);
         }
     }
 }

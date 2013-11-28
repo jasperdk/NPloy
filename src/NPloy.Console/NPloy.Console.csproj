@@ -52,9 +52,9 @@
     <Compile Include="Support\PowershellRunner.cs" />
     <Compile Include="Commands\UninstallPackage.cs" />
     <Compile Include="ConsoleException.cs" />
-    <Compile Include="Commands\StopPackage.cs" />
+    <Compile Include="Commands\StopPackageCommand.cs" />
     <Compile Include="Commands\UninstallNodeCommand.cs" />
-    <Compile Include="Commands\StartPackage.cs" />
+    <Compile Include="Commands\StartPackageCommand.cs" />
     <Compile Include="Commands\InstallPackageCommand.cs" />
     <Compile Include="Commands\InstallNodeCommand.cs" />
     <Compile Include="Commands\InstallRoleCommand.cs" />

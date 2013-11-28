@@ -23,7 +23,6 @@ namespace NPloy.Support
                 }
             };
 
-
             pProcess.Start();
             var strOutput = pProcess.StandardOutput.ReadToEnd();
             Console.Write(strOutput);
