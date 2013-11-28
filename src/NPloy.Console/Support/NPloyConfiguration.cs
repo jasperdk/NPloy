@@ -8,6 +8,9 @@ namespace NPloy.Support
         IList<string> GetFiles(string s);
         Dictionary<string,string> GetProperties(string environment);
         bool FileExists(string filePath);
+        bool HasInstalledPackages(string workingDirectory);
+        IEnumerable<string> GetInstalledPackges(string workingDirectory);
+        void PackagesHasBeenUninstalled(string workingDirectory);
     }
 
     public class NPloyConfiguration:INPloyConfiguration
@@ -34,6 +37,21 @@ namespace NPloy.Support
         public bool FileExists(string filePath)
         {
             return File.Exists(filePath);
+        }
+
+        public bool HasInstalledPackages(string workingDirectory)
+        {
+            return File.Exists(workingDirectory + @"\packages.config");
+        }
+
+        public IEnumerable<string> GetInstalledPackges(string workingDirectory)
+        {
+            return File.ReadAllLines(workingDirectory + @"\packages.config");
+        }
+
+        public void PackagesHasBeenUninstalled(string workingDirectory)
+        {
+            File.Delete(workingDirectory + @"\packages.config");
         }
     }
 }

@@ -1,12 +1,25 @@
 ﻿using System;
 using ManyConsole;
+using NPloy.Support;
 
 namespace NPloy.Commands
 {
     public class UninstallPackageCommand : ConsoleCommand
     {
+        private readonly INPloyConfiguration _nPloyConfiguration;
+        private readonly IPowershellRunner _powershellRunner;
+
         public UninstallPackageCommand()
+            : this(new NPloyConfiguration(), new PowerShellRunner())
         {
+
+        }
+
+        public UninstallPackageCommand(INPloyConfiguration nPloyConfiguration,
+            IPowershellRunner powershellRunner)
+        {
+            _nPloyConfiguration = nPloyConfiguration;
+            _powershellRunner = powershellRunner;
             IsCommand("UninstallPackage", "UninstallPackage");
             HasAdditionalArguments(1, "Package");
             HasOption("d|directory=", "Uninstall from this directory", s => WorkingDirectory = s);
@@ -20,24 +33,15 @@ namespace NPloy.Commands
         {
 
             Package = Package.Replace(' ', '.');
-            var pProcess = new System.Diagnostics.Process
-            {
-                StartInfo =
-                {
-                    FileName = @"powershell",
-                    Arguments =@"App_install\Uninstall.ps1",
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    WorkingDirectory = WorkingDirectory+@"\"+Package
-                }
-            };
 
-            pProcess.Start();
-            string strOutput = pProcess.StandardOutput.ReadToEnd();
-            Console.Write(strOutput);
-            pProcess.WaitForExit();
-            if (pProcess.ExitCode != 0)
-                throw new ConsoleException(pProcess.ExitCode);
+            var applicationPath = WorkingDirectory + @"\" + Package;
+
+            if (!_nPloyConfiguration.FileExists(applicationPath + @"\App_Install\Uninstall.ps1"))
+                return 0;
+
+            Console.WriteLine("Running uninstall scripts for package: " + Package);
+
+            _powershellRunner.RunPowershellScript(@".\App_Install\Uninstall.ps1", applicationPath);
             return 0;
         }
     }

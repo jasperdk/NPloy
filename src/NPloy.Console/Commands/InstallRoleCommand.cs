@@ -13,6 +13,7 @@ namespace NPloy.Commands
         string WorkingDirectory { get; set; }
         string Role { get; set; }
         string Environment { get; set; }
+        string PackageSources { get; set; }
     }
 
     public class InstallRoleCommand : ConsoleCommand, IInstallRoleCommand
@@ -23,16 +24,18 @@ namespace NPloy.Commands
             HasAdditionalArguments(1, "Role");
             HasOption("d|directory=", "Deploy to this directory", s => WorkingDirectory = s);
             HasOption("e|environment=", "Deploy to this directory", s => Environment = s);
+            HasOption("p|packagesources=", "Packagesources", s => PackageSources = s);
         }
 
         public string Role { get; set; }
+        public string PackageSources { get; set; }
         public string Environment { get; set; }
         public string WorkingDirectory { get; set; }
 
         public override int Run(string[] remainingArguments)
         {
             var packages = new List<string>();
-            var roleFile =  @".nploy\roles\" + Role;
+            var roleFile = @".nploy\roles\" + Role;
 
             if (Role.ToLower().EndsWith(".role") && File.Exists(roleFile))
             {
@@ -52,15 +55,18 @@ namespace NPloy.Commands
                 packages.Add(Role);
             }
 
-            var installedPackages = NugetInstallPackages(packages);
+            var installedPackages = NugetInstallPackages(packages,PackageSources);
             InstallPackages(installedPackages);
             StartPackages(installedPackages);
 
             return 0;
         }
 
-        private List<string> NugetInstallPackages(IEnumerable<string> packages)
+        private List<string> NugetInstallPackages(IEnumerable<string> packages, string packageSources)
         {
+            var packageSourcesArgument = "";
+            if (!string.IsNullOrEmpty(packageSources))
+                packageSourcesArgument = @"-Source " + packageSources + "";
             var installedPackages = new List<string>();
             foreach (var package in packages)
             {
@@ -68,8 +74,8 @@ namespace NPloy.Commands
                     {
                         StartInfo =
                             {
-                                FileName = "nuget",
-                                Arguments = string.Format(@"install {0} -OutputDirectory {1} -Source d:\install\packages", package, WorkingDirectory),
+                                FileName = @".nuget\nuget",
+                                Arguments = string.Format(@"install {0} -OutputDirectory {1} {2}", package, WorkingDirectory, packageSourcesArgument),
                                 UseShellExecute = false,
                                 RedirectStandardOutput = true
                             }
@@ -102,15 +108,12 @@ namespace NPloy.Commands
 
         private void StartPackages(IEnumerable<string> installedPackages)
         {
-            foreach (var installedPackage in installedPackages)
-            {
-                var startPackageCommand = new StartPackageCommand();
-                startPackageCommand.WorkingDirectory = WorkingDirectory;
-                startPackageCommand.Package = installedPackage;
-                var exitCode = startPackageCommand.Run(new[] { installedPackage });
-                if (exitCode != 0)
-                    throw new ConsoleException(exitCode);
-            }
+            var startNodeCommand = new StartNodeCommand();
+            startNodeCommand.WorkingDirectory = WorkingDirectory;
+            //startNodeCommand.Packages = installedPackage;
+            var exitCode = startNodeCommand.Run(new string[0]);
+            if (exitCode != 0)
+                throw new ConsoleException(exitCode);
         }
 
         private void InstallPackages(IEnumerable<string> installedPackages)

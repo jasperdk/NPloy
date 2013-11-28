@@ -1,25 +1,26 @@
 ﻿using System;
+using System.Linq;
 using ManyConsole;
 using NPloy.Support;
 
 namespace NPloy.Commands
 {
-    public class UninstallNodeCommand : ConsoleCommand
+    public class StopNodeCommand : ConsoleCommand
     {
         private readonly INPloyConfiguration _nPloyConfiguration;
 
-        public UninstallNodeCommand()
+        public StopNodeCommand()
             : this(new NPloyConfiguration())
         {
 
         }
 
-        public UninstallNodeCommand(INPloyConfiguration nPloyConfiguration)
+        public StopNodeCommand(INPloyConfiguration nPloyConfiguration)
         {
             _nPloyConfiguration = nPloyConfiguration;
-            IsCommand("UninstallNode", "UninstallNode");
+            IsCommand("StopNode", "StopNode");
             //HasAdditionalArguments(1, "Node");
-            HasOption("d|directory=", "Uninstall from this directory", s => WorkingDirectory = s);
+            HasOption("d|directory=", "Stop installed packages in this directory", s => WorkingDirectory = s);
         }
 
         //public string Node;
@@ -29,28 +30,22 @@ namespace NPloy.Commands
         {
             if (!_nPloyConfiguration.HasInstalledPackages(WorkingDirectory))
             {
-                Console.WriteLine("Nothing to uninstall");
+                Console.WriteLine("Nothing to stop");
                 return 0;
             }
             var installedPackages = _nPloyConfiguration.GetInstalledPackges(WorkingDirectory);
 
-            var stopNodeCommand = new StopNodeCommand
-                {
-                    WorkingDirectory = WorkingDirectory
-                };
-            stopNodeCommand.Run(new string[0]);
-
-            foreach (var package in installedPackages)
+            foreach (var package in installedPackages.Reverse())
             {
-                var uninstallPackageCommand = new UninstallPackageCommand
+                var stopPackageCommand = new StopPackageCommand
                     {
                         Package = package,
                         WorkingDirectory = WorkingDirectory
                     };
-                uninstallPackageCommand.Run(new string[0]);
+                var result =stopPackageCommand.Run(new string[0]);
+                if (result > 0)
+                    return result;
             }
-
-            _nPloyConfiguration.PackagesHasBeenUninstalled(WorkingDirectory);
 
             return 0;
         }

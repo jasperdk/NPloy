@@ -49,6 +49,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\StopNodeCommand.cs" />
+    <Compile Include="Commands\StartNodeCommand.cs" />
     <Compile Include="Support\PowershellRunner.cs" />
     <Compile Include="Commands\UninstallPackage.cs" />
     <Compile Include="ConsoleException.cs" />

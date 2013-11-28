@@ -16,12 +16,15 @@ namespace NPloy.Commands
 
         public InstallNodeCommand(IInstallRoleCommand installRoleCommand)
         {
+            _installRoleCommand = installRoleCommand;
             IsCommand("InstallNode", "InstallNode");
             HasAdditionalArguments(1, "Node");
             HasOption("d|directory=", "Install to this directory", s => WorkingDirectory = s);
-            _installRoleCommand = installRoleCommand;
+            HasOption("p|packagesources=", "Packagesources", s => PackageSources = s);
+            
         }
 
+        protected string PackageSources { get; set; }
         public string Node;
         public string WorkingDirectory;
         private readonly IInstallRoleCommand _installRoleCommand;
@@ -51,6 +54,7 @@ namespace NPloy.Commands
                 _installRoleCommand.WorkingDirectory = WorkingDirectory;
                 _installRoleCommand.Role = role;
                 _installRoleCommand.Environment = environment;
+                _installRoleCommand.PackageSources = PackageSources;
                 _installRoleCommand.Run(new string[0]);
             }
 

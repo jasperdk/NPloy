@@ -6,9 +6,9 @@ using NUnit.Framework;
 namespace NPloy.Console.UnitTests.Commands
 {
     [TestFixture]
-    public class StopPackageCommandTests
+    public class UninstallPackageCommandTests
     {
-        private StopPackageCommand _command;
+        private UninstallPackageCommand _command;
         private Mock<INPloyConfiguration> _nPloyConfiguration;
         private Mock<IPowershellRunner> _powershellRunner;
 
@@ -17,14 +17,14 @@ namespace NPloy.Console.UnitTests.Commands
         {
             _nPloyConfiguration = new Mock<INPloyConfiguration>();
             _powershellRunner = new Mock<IPowershellRunner>();
-            _command = new StopPackageCommand(_nPloyConfiguration.Object,_powershellRunner.Object);
+            _command = new UninstallPackageCommand(_nPloyConfiguration.Object, _powershellRunner.Object);
         }
 
         [Test]
         public void Run_ShouldCallPowershellScript()
         {
             // Arrange
-            _nPloyConfiguration.Setup(f => f.FileExists(@"\NPloy.Samples.WindowsService.1.0.0.0\App_Install\Stop.ps1"))
+            _nPloyConfiguration.Setup(f => f.FileExists(@"\NPloy.Samples.WindowsService.1.0.0.0\App_Install\Uninstall.ps1"))
                             .Returns(true);
 
             // Act
@@ -34,8 +34,9 @@ namespace NPloy.Console.UnitTests.Commands
             // Assert
             _powershellRunner.Verify(
                 p =>
-                p.RunPowershellScript(@".\App_Install\Stop.ps1", @"\NPloy.Samples.WindowsService.1.0.0.0"),
+                p.RunPowershellScript(@".\App_Install\Uninstall.ps1", @"\NPloy.Samples.WindowsService.1.0.0.0"),
                 Times.Once());
+
         }
     }
 }

@@ -54,6 +54,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\StopPackageCommandTests.cs" />
+    <Compile Include="Commands\UninstallNodeCommandTests.cs" />
+    <Compile Include="Commands\UninstallPackageCommandTests.cs" />
     <Compile Include="Commands\InstallNodeCommandTests.cs" />
     <Compile Include="Commands\InstallPackageCommandTests.cs" />
     <Compile Include="Commands\InstallRoleCommandTests.cs" />
