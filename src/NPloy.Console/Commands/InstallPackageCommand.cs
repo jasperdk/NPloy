@@ -2,30 +2,49 @@
 using System.IO;
 using System.Linq;
 using ManyConsole;
+using NPloy.Support;
 
 namespace NPloy.Commands
 {
-    public class InstallPackageCommand : ConsoleCommand
+    public interface IInstallPackageCommand
     {
+        string Package { get; set; }
+    }
+
+    public class InstallPackageCommand : ConsoleCommand, IInstallPackageCommand
+    {
+        private readonly INPloyConfiguration _nPloyConfiguration;
+        private readonly IPowershellRunner _powershellRunner;
+
         public InstallPackageCommand()
+            : this(new NPloyConfiguration(),
+            new PowerShellRunner())
         {
+        }
+
+        public InstallPackageCommand(INPloyConfiguration nPloyConfiguration,IPowershellRunner powershellRunner)
+        {
+            _nPloyConfiguration = nPloyConfiguration;
+            _powershellRunner = powershellRunner;
             IsCommand("InstallPackage", "InstallPackage");
             HasAdditionalArguments(1, "Package");
             HasOption("environment", "", e => Environment = e);
             HasOption("d|directory=", "Install in this directory", s => WorkingDirectory = s);
         }
 
-        public string Package;
+        public string Package { get; set; }
         public string Environment;
         public string WorkingDirectory { get; set; }
 
         public override int Run(string[] remainingArguments)
         {
+            if (string.IsNullOrEmpty(Package))
+                throw new ApplicationException("Package must be set!");
             Package = Package.Replace(' ', '.');
             Console.WriteLine("Running install scripts in (" + WorkingDirectory + @"\" + Package + @"\App_Install" + ") for package: " + Package);
 
             string strOutput;
-            var files = Directory.GetFiles(WorkingDirectory + @"\" + Package + @"\App_Install\");
+            var files = _nPloyConfiguration.GetFiles(WorkingDirectory + @"\" + Package + @"\App_Install\");
             foreach (var file in files.Where(f => Path.GetFileName(f).ToLower().StartsWith("install")).ToArray())
             {
                 Console.WriteLine("Running install script : " + file);
@@ -38,34 +57,15 @@ namespace NPloy.Commands
         private string RunCommand(string script)
         {
             var environment = Environment ?? "dev";
-            var properties = File.ReadAllLines(@".nploy\environments\" + environment + @"\env.prop");
+            var properties = _nPloyConfiguration.GetProperties(environment);
             foreach (var property in properties)
             {
-                var items = property.Split('=');
-                script += " -" + items[0].Replace(".", "") + @" '" + property.Remove(0, items[0].Length + 1) + @"'";
+               script += " -" + property.Key + @" '" +property.Value +@"'";
             }
 
             Package = Package.Replace(' ', '.');
-           
-            var pProcess = new System.Diagnostics.Process
-                {
-                    StartInfo =
-                        {
-                            FileName = @"powershell",
-                            Arguments = script,
-                            UseShellExecute = false,
-                            RedirectStandardOutput = true,
-                            WorkingDirectory = WorkingDirectory + @"\" + Package
-                        }
-                };
 
-            
-            pProcess.Start();
-            var strOutput = pProcess.StandardOutput.ReadToEnd();
-            Console.Write(strOutput);
-            pProcess.WaitForExit();
-            if (pProcess.ExitCode != 0)
-                throw new ConsoleException(pProcess.ExitCode);
+            var strOutput = _powershellRunner.RunPowershellScript(script, WorkingDirectory + @"\" + Package);
 
             return strOutput;
         }

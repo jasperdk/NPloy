@@ -54,6 +54,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\InstallNodeCommandTests.cs" />
+    <Compile Include="Commands\InstallPackageCommandTests.cs" />
+    <Compile Include="Commands\InstallRoleCommandTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

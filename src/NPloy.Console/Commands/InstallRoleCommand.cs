@@ -94,7 +94,7 @@ namespace NPloy.Commands
                     }
                 }
                 pProcess.WaitForExit();
-                if (pProcess.ExitCode > 1)
+                if (pProcess.ExitCode > 0)
                     throw new ConsoleException(pProcess.ExitCode);
             }
             return installedPackages;
