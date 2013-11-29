@@ -21,7 +21,7 @@ namespace NPloy.Commands
             HasAdditionalArguments(1, "Node");
             HasOption("d|directory=", "Install to this directory", s => WorkingDirectory = s);
             HasOption("p|packagesources=", "Packagesources", s => PackageSources = s);
-            
+
         }
 
         protected string PackageSources { get; set; }
@@ -44,11 +44,14 @@ namespace NPloy.Commands
             if (!Node.ToLower().EndsWith(".node"))
                 Node += ".node";
             if (!File.Exists(Node))
-                throw new FileNotFoundException(Node);
+            {
+                Console.WriteLine("File not found: " + Node);
+                throw new ConsoleException(1);
+            }
 
             Console.WriteLine("Installing node: " + Node);
             var roles = GetRolesFromFile();
-            string environment=GetEnvironmentFromFile();
+            string environment = GetEnvironmentFromFile();
             foreach (var role in roles)
             {
                 _installRoleCommand.WorkingDirectory = WorkingDirectory;
@@ -67,8 +70,8 @@ namespace NPloy.Commands
             doc.Load(Node);
             var docNodes = doc.GetElementsByTagName("node");
             var node = docNodes.Item(0);
-           
-            if(node!=null)
+
+            if (node != null)
                 return node.Attributes["environment"].Value;
             return "";
         }

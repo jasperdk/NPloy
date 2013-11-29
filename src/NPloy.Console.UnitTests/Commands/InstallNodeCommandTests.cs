@@ -94,7 +94,7 @@ namespace NPloy.Console.UnitTests.Commands
         [Test]
         public void Run_WhenArgumentFileDoesNotExists_ShouldThrowException()
         {
-            Assert.Throws<FileNotFoundException>(() => _command.Run(new[] { "filedoesntexists.node" }));
+            Assert.Throws<ConsoleException>(() => _command.Run(new[] { "filedoesntexists.node" }));
         }
 
         [Test]
