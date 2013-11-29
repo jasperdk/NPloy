@@ -17,17 +17,20 @@ namespace NPloy.Commands
     {
         private readonly INPloyConfiguration _nPloyConfiguration;
         private readonly IPowershellRunner _powershellRunner;
+        private readonly INuGetRunner _nuGetRunner;
 
         public InstallPackageCommand()
             : this(new NPloyConfiguration(),
-                   new PowerShellRunner())
+                   new PowerShellRunner(),
+            new NuGetRunner())
         {
         }
 
-        public InstallPackageCommand(INPloyConfiguration nPloyConfiguration, IPowershellRunner powershellRunner)
+        public InstallPackageCommand(INPloyConfiguration nPloyConfiguration, IPowershellRunner powershellRunner, INuGetRunner nuGetRunner)
         {
             _nPloyConfiguration = nPloyConfiguration;
             _powershellRunner = powershellRunner;
+            _nuGetRunner = nuGetRunner;
             IsCommand("InstallPackage", "InstallPackage");
             HasAdditionalArguments(1, "Package");
             HasOption("environment", "", e => Environment = e);
@@ -96,58 +99,10 @@ namespace NPloy.Commands
 
         private string NugetInstallPackage(string package, string packageSources)
         {
-            var workingDirectory = WorkingDirectory;
+            if (!string.IsNullOrEmpty(WorkingDirectory) && !Directory.Exists(WorkingDirectory))
+                Directory.CreateDirectory(WorkingDirectory);
 
-            if (!string.IsNullOrEmpty(workingDirectory) && !Directory.Exists(workingDirectory))
-                Directory.CreateDirectory(workingDirectory);
-
-            var packageSourcesArgument = "";
-            if (!string.IsNullOrEmpty(packageSources))
-                packageSourcesArgument = @"-Source " + packageSources + "";
-
-            var outputDirectoryArgument = "";
-            if (!string.IsNullOrEmpty(workingDirectory))
-                outputDirectoryArgument = @"-OutputDirectory " + workingDirectory + "";
-
-            if (!string.IsNullOrEmpty(NuGetPath))
-                NuGetPath += @"\";
-
-            var installedPackage = "";
-
-            var pProcess = new System.Diagnostics.Process
-            {
-                StartInfo =
-                {
-                    FileName =NuGetPath+ @"nuget",
-                    Arguments = string.Format(@"install {0} {1} {2}", package, outputDirectoryArgument, packageSourcesArgument),
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true
-                }
-            };
-
-            pProcess.StartInfo.WorkingDirectory = workingDirectory;
-
-            pProcess.Start();
-            var strOutput = pProcess.StandardOutput.ReadToEnd();
-            Console.Write(strOutput);
-            var m = Regex.Match(strOutput, @"Successfully installed '([^']*)'\.", RegexOptions.CultureInvariant);
-            if (m.Success)
-            {
-                installedPackage = m.Groups[1].Value;
-            }
-            else
-            {
-                m = Regex.Match(strOutput, @"'([^']*)' already installed\.", RegexOptions.CultureInvariant);
-                if (m.Success)
-                {
-                    installedPackage = m.Groups[1].Value;
-                }
-            }
-            pProcess.WaitForExit();
-            if (pProcess.ExitCode > 0)
-                throw new ConsoleException(pProcess.ExitCode);
-
-            return installedPackage.Replace(' ', '.');
+            return _nuGetRunner.RunNuGetInstall(package, packageSources, NuGetPath, WorkingDirectory);
         }
     }
 }
