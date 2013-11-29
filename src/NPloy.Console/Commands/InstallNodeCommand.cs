@@ -46,7 +46,7 @@ namespace NPloy.Commands
             if (!File.Exists(Node))
             {
                 Console.WriteLine("File not found: " + Node);
-                throw new ConsoleException(1);
+                return 1;
             }
 
             Console.WriteLine("Installing node: " + Node);
