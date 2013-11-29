@@ -44,8 +44,7 @@ namespace NPloy.Console.UnitTests.Commands
             _command.Run(new[] { "test.node" });
 
             // Assert
-            _installRoleCommandMock.VerifySet(c => c.Role = "test1.role", Times.Once());
-            _installRoleCommandMock.Verify(c => c.Run(new string[0]), Times.Once());
+            _installRoleCommandMock.Verify(c => c.Run(new []{"test1.role"}), Times.Once());
         }
 
         [Test]
@@ -58,8 +57,7 @@ namespace NPloy.Console.UnitTests.Commands
             _command.Run(new[] { "test" });
 
             // Assert
-            _installRoleCommandMock.VerifySet(c => c.Role = "test1.role", Times.Once());
-            _installRoleCommandMock.Verify(c => c.Run(new string[0]), Times.Once());
+            _installRoleCommandMock.Verify(c => c.Run(new[] { "test1.role" }), Times.Once());
         }
 
         [Test]
@@ -86,9 +84,8 @@ namespace NPloy.Console.UnitTests.Commands
             _command.Run(new[] { "test.node" });
 
             // Assert
-            _installRoleCommandMock.VerifySet(c => c.Role = "test1.role", Times.Once());
-            _installRoleCommandMock.VerifySet(c => c.Role = "test2.role", Times.Once());
-            _installRoleCommandMock.Verify(c => c.Run(new string[0]), Times.Exactly(2));
+            _installRoleCommandMock.Verify(c => c.Run(new[] { "test1.role" }), Times.Once());
+            _installRoleCommandMock.Verify(c => c.Run(new[] { "test2.role" }), Times.Once());
         }
 
         [Test]

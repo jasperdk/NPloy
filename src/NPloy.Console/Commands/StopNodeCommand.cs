@@ -39,10 +39,9 @@ namespace NPloy.Commands
             {
                 var stopPackageCommand = new StopPackageCommand
                     {
-                        Package = package,
                         WorkingDirectory = WorkingDirectory
                     };
-                var result =stopPackageCommand.Run(new string[0]);
+                var result =stopPackageCommand.Run(new []{package});
                 if (result > 0)
                     return result;
             }

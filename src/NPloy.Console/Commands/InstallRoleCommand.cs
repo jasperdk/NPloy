@@ -129,8 +129,7 @@ namespace NPloy.Commands
         {
             var startNodeCommand = new StartNodeCommand();
             startNodeCommand.WorkingDirectory = WorkingDirectory;
-            //startNodeCommand.Packages = installedPackage;
-            var exitCode = startNodeCommand.Run(new string[0]);
+             var exitCode = startNodeCommand.Run(new string[0]);
             if (exitCode != 0)
                 throw new ConsoleException(exitCode);
         }
@@ -141,8 +140,7 @@ namespace NPloy.Commands
             {
                 var installPackageCommand = new InstallPackageCommand();
                 installPackageCommand.WorkingDirectory = WorkingDirectory;
-                installPackageCommand.Package = installedPackage;
-                var exitCode = installPackageCommand.Run(new string[0]);
+                var exitCode = installPackageCommand.Run(new[] { installedPackage });
                 if (exitCode != 0)
                     throw new ConsoleException(exitCode);
                 using (StreamWriter sw = File.AppendText(WorkingDirectory + @"\packages.config"))

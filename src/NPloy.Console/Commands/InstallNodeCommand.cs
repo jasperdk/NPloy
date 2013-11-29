@@ -53,10 +53,9 @@ namespace NPloy.Commands
             foreach (var role in roles)
             {
                 _installRoleCommand.WorkingDirectory = WorkingDirectory;
-                _installRoleCommand.Role = role;
                 _installRoleCommand.Environment = environment;
                 _installRoleCommand.PackageSources = PackageSources;
-                _installRoleCommand.Run(new string[0]);
+                _installRoleCommand.Run(new []{role});
             }
 
             return 0;

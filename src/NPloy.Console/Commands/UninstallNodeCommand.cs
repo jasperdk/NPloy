@@ -44,10 +44,9 @@ namespace NPloy.Commands
             {
                 var uninstallPackageCommand = new UninstallPackageCommand
                     {
-                        Package = package,
                         WorkingDirectory = WorkingDirectory
                     };
-                uninstallPackageCommand.Run(new string[0]);
+                uninstallPackageCommand.Run(new[] { package });
             }
 
             _nPloyConfiguration.PackagesHasBeenUninstalled(WorkingDirectory);
