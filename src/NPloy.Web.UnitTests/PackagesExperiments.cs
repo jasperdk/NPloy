@@ -7,7 +7,7 @@ namespace NPloy.Web.UnitTests
     [TestFixture]
     public class PackagesExperiments
     {
-        [Test]
+        [Test, Ignore()]
         public void ShouldMethod()
         {
             // Arrange
