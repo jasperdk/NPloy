@@ -33,12 +33,16 @@ namespace NPloy.Commands
             HasOption("environment", "", e => Environment = e);
             HasOption("d|directory=", "Install in this directory", s => WorkingDirectory = s);
             HasOption("p|packagesources=", "Packagesources", s => PackageSources = s);
+            HasOption("c|configuration=", "NPloy configuration directory", s => ConfigurationDirectory = s);
+            HasOption("n|nuget=", "NuGet console path", s => NuGetPath = s);
         }
 
         public string Package { get; set; }
         public string Environment;
         public string WorkingDirectory { get; set; }
         public string PackageSources { get; set; }
+        public string ConfigurationDirectory { get; set; }
+        public string NuGetPath { get; set; }
 
         public override int Run(string[] remainingArguments)
         {
@@ -79,7 +83,7 @@ namespace NPloy.Commands
         private string RunCommand(string installedPackage, string script)
         {
             var environment = Environment ?? "dev";
-            var properties = _nPloyConfiguration.GetProperties(Package, environment);
+            var properties = _nPloyConfiguration.GetProperties(Package, environment,ConfigurationDirectory);
             foreach (var property in properties)
             {
                 script += " -" + property.Key + @" '" + property.Value + @"'";
@@ -105,13 +109,16 @@ namespace NPloy.Commands
             if (!string.IsNullOrEmpty(workingDirectory))
                 outputDirectoryArgument = @"-OutputDirectory " + workingDirectory + "";
 
+            if (!string.IsNullOrEmpty(NuGetPath))
+                NuGetPath += @"\";
+
             var installedPackage = "";
 
             var pProcess = new System.Diagnostics.Process
             {
                 StartInfo =
                 {
-                    FileName = @".nuget\nuget",
+                    FileName =NuGetPath+ @"nuget",
                     Arguments = string.Format(@"install {0} {1} {2}", package, outputDirectoryArgument, packageSourcesArgument),
                     UseShellExecute = false,
                     RedirectStandardOutput = true

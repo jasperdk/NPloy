@@ -26,7 +26,7 @@ namespace NPloy.Console.UnitTests.Support
 
             // Act
             var nployConfiguration = new NPloyConfiguration();
-            var properties = nployConfiguration.GetProperties("package","test");
+            var properties = nployConfiguration.GetProperties("package","test",".nploy");
 
             // Assert
             Assert.That(properties.Count, Is.EqualTo(1));

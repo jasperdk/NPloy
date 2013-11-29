@@ -30,7 +30,7 @@ namespace NPloy.Console.UnitTests.Commands
 
             var properties = new Dictionary<string, string>();
             properties.Add("propkey", "propvalue");
-            _nPloyConfiguration.Setup(n => n.GetProperties(It.IsAny<string>(), "NPloy.Samples.WindowsService.1.0.0.0")).Returns(properties);
+            _nPloyConfiguration.Setup(n => n.GetProperties(It.IsAny<string>(), "NPloy.Samples.WindowsService.1.0.0.0","")).Returns(properties);
 
             // Act
             _command.Run(new []{@"NPloy.Samples.WindowsService 1.0.0.0"});

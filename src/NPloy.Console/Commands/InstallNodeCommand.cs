@@ -20,7 +20,7 @@ namespace NPloy.Commands
             IsCommand("InstallNode", "InstallNode");
             HasAdditionalArguments(1, "Node");
             HasOption("d|directory=", "Install to this directory", s => WorkingDirectory = s);
-            HasOption("p|packagesources=", "Packagesources", s => PackageSources = s);
+            HasOption("p|packagesources=", "NuGet packagesources", s => PackageSources = s);
 
         }
 
@@ -50,6 +50,7 @@ namespace NPloy.Commands
                 }
 
                 Console.WriteLine("Installing node: " + Node);
+                var nployConfigurationPath = Path.GetDirectoryName(Node);
                 var roles = GetRolesFromFile();
                 string environment = GetEnvironmentFromFile();
                 foreach (var role in roles)
@@ -57,6 +58,7 @@ namespace NPloy.Commands
                     _installRoleCommand.WorkingDirectory = WorkingDirectory;
                     _installRoleCommand.Environment = environment;
                     _installRoleCommand.PackageSources = PackageSources;
+                    _installRoleCommand.ConfigurationDirectory = nployConfigurationPath;
                     var result = _installRoleCommand.Run(new[] { role });
                     if (result > 0)
                         return result;

@@ -5,8 +5,9 @@ $ErrorActionPreference = "stop"
 try
 {
 	
-	& .\NPloy.Samples.WindowsService.exe install -username $ServiceUsername -password $ServicePassword
-	Exit 100
+	& .\NPloy.Samples.WindowsService.exe install 
+	#-username $ServiceUsername -password $ServicePassword
+	
 }
 catch
 {

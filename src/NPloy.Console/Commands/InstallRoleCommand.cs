@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text.RegularExpressions;
 using System.Xml;
 using ManyConsole;
 
@@ -14,6 +13,7 @@ namespace NPloy.Commands
         string Role { get; set; }
         string Environment { get; set; }
         string PackageSources { get; set; }
+        string ConfigurationDirectory { get; set; }
     }
 
     public class InstallRoleCommand : ConsoleCommand, IInstallRoleCommand
@@ -23,14 +23,16 @@ namespace NPloy.Commands
             IsCommand("InstallRole", "InstallRole");
             HasAdditionalArguments(1, "Role");
             HasOption("d|directory=", "Deploy to this directory", s => WorkingDirectory = s);
-            HasOption("e|environment=", "Deploy to this directory", s => Environment = s);
-            HasOption("p|packagesources=", "Packagesources", s => PackageSources = s);
+            HasOption("e|environment=", "Deploy to this environment", s => Environment = s);
+            HasOption("p|packagesources=", "NuGet packagesources", s => PackageSources = s);
+            HasOption("c|configuration=", "NPloy configuration directory", s => ConfigurationDirectory = s);
         }
 
         public string Role { get; set; }
         public string PackageSources { get; set; }
         public string Environment { get; set; }
         public string WorkingDirectory { get; set; }
+        public string ConfigurationDirectory { get; set; }
 
         public override int Run(string[] remainingArguments)
         {
@@ -38,9 +40,11 @@ namespace NPloy.Commands
             {
                 HandleArguments(remainingArguments);
                 var packages = new List<string>();
-                var roleFile = @".nploy\roles\" + Role;
+                var roleFile = @"roles\" + Role;
+                if (!string.IsNullOrEmpty(ConfigurationDirectory))
+                    roleFile = ConfigurationDirectory + @"\" + roleFile;
+                
                 string subFolder = "";
-
                 if (Role.ToLower().EndsWith(".role") && File.Exists(roleFile))
                 {
                     Console.WriteLine("Installing role: " + Role);
@@ -100,6 +104,7 @@ namespace NPloy.Commands
                 var installPackageCommand = new InstallPackageCommand();
                 installPackageCommand.WorkingDirectory = WorkingDirectory;
                 installPackageCommand.PackageSources = PackageSources;
+                installPackageCommand.ConfigurationDirectory = ConfigurationDirectory;
                 var exitCode = installPackageCommand.Run(new[] { package });
                 if (exitCode > 0)
                     throw new ConsoleException(exitCode);
