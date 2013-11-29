@@ -14,6 +14,7 @@ namespace NPloy.Commands
         string Environment { get; set; }
         string PackageSources { get; set; }
         string ConfigurationDirectory { get; set; }
+        string NuGetPath { get; set; }
     }
 
     public class InstallRoleCommand : ConsoleCommand, IInstallRoleCommand
@@ -26,6 +27,7 @@ namespace NPloy.Commands
             HasOption("e|environment=", "Deploy to this environment", s => Environment = s);
             HasOption("p|packagesources=", "NuGet packagesources", s => PackageSources = s);
             HasOption("c|configuration=", "NPloy configuration directory", s => ConfigurationDirectory = s);
+            HasOption("n|nuget=", "NuGet console path", s => NuGetPath = s);
         }
 
         public string Role { get; set; }
@@ -33,6 +35,7 @@ namespace NPloy.Commands
         public string Environment { get; set; }
         public string WorkingDirectory { get; set; }
         public string ConfigurationDirectory { get; set; }
+        public string NuGetPath { get; set; }
 
         public override int Run(string[] remainingArguments)
         {
@@ -43,7 +46,7 @@ namespace NPloy.Commands
                 var roleFile = @"roles\" + Role;
                 if (!string.IsNullOrEmpty(ConfigurationDirectory))
                     roleFile = ConfigurationDirectory + @"\" + roleFile;
-                
+
                 string subFolder = "";
                 if (Role.ToLower().EndsWith(".role") && File.Exists(roleFile))
                 {
@@ -105,6 +108,7 @@ namespace NPloy.Commands
                 installPackageCommand.WorkingDirectory = WorkingDirectory;
                 installPackageCommand.PackageSources = PackageSources;
                 installPackageCommand.ConfigurationDirectory = ConfigurationDirectory;
+                installPackageCommand.NuGetPath = NuGetPath;
                 var exitCode = installPackageCommand.Run(new[] { package });
                 if (exitCode > 0)
                     throw new ConsoleException(exitCode);
