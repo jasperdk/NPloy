@@ -28,8 +28,7 @@ namespace NPloy.Console.UnitTests.Commands
                             .Returns(true);
 
             // Act
-            _command.Package = @"NPloy.Samples.WindowsService 1.0.0.0";
-            _command.Run(new string[0]);
+            _command.Run(new []{@"NPloy.Samples.WindowsService 1.0.0.0"});
 
             // Assert
             _powershellRunner.Verify(

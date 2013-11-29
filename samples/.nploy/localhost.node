@@ -2,6 +2,7 @@
 <node environment="dev">
 	<roles>
 		<role name="service-packages.role" />
+		<role name="tools-packages.role" />
 		<!--<role name="NPloy.Samples.Web" />-->
 	</roles>
 </node>

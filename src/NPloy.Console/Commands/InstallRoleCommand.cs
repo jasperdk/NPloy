@@ -34,14 +34,19 @@ namespace NPloy.Commands
 
         public override int Run(string[] remainingArguments)
         {
+            HandleArguments(remainingArguments);
             var packages = new List<string>();
             var roleFile = @".nploy\roles\" + Role;
+            string subFolder = "";
 
             if (Role.ToLower().EndsWith(".role") && File.Exists(roleFile))
             {
                 Console.WriteLine("Installing role: " + Role);
                 var doc = new XmlDocument();
+
                 doc.Load(roleFile);
+                var rootElement = doc.DocumentElement;
+                subFolder = rootElement.Attributes["subFolder"]!=null?rootElement.Attributes["subFolder"].Value:"";
                 var docPackages = doc.GetElementsByTagName("package");
                 foreach (XmlNode docPackage in docPackages)
                 {
@@ -55,15 +60,29 @@ namespace NPloy.Commands
                 packages.Add(Role);
             }
 
-            var installedPackages = NugetInstallPackages(packages,PackageSources);
-            InstallPackages(installedPackages);
-            StartPackages(installedPackages);
+            var installedPackages = NugetInstallPackages(packages,subFolder, PackageSources);
+            if (string.IsNullOrEmpty(subFolder))
+            {
+                InstallPackages(installedPackages);
+                StartPackages(installedPackages);
+            }
 
             return 0;
         }
 
-        private List<string> NugetInstallPackages(IEnumerable<string> packages, string packageSources)
+        private void HandleArguments(string[] remainingArguments)
         {
+            Role = remainingArguments[0];
+        }
+
+        private List<string> NugetInstallPackages(IEnumerable<string> packages, string subFolder, string packageSources)
+        {
+            var workingDirectory = WorkingDirectory;
+            if (!string.IsNullOrEmpty(subFolder))
+                workingDirectory += @"\" + subFolder;
+            if (!Directory.Exists(workingDirectory))
+                Directory.CreateDirectory(workingDirectory);
+
             var packageSourcesArgument = "";
             if (!string.IsNullOrEmpty(packageSources))
                 packageSourcesArgument = @"-Source " + packageSources + "";
@@ -75,13 +94,13 @@ namespace NPloy.Commands
                         StartInfo =
                             {
                                 FileName = @".nuget\nuget",
-                                Arguments = string.Format(@"install {0} -OutputDirectory {1} {2}", package, WorkingDirectory, packageSourcesArgument),
+                                Arguments = string.Format(@"install {0} -OutputDirectory {1} {2}", package, workingDirectory, packageSourcesArgument),
                                 UseShellExecute = false,
                                 RedirectStandardOutput = true
                             }
                     };
 
-                pProcess.StartInfo.WorkingDirectory = WorkingDirectory;
+                pProcess.StartInfo.WorkingDirectory = workingDirectory;
 
                 pProcess.Start();
                 var strOutput = pProcess.StandardOutput.ReadToEnd();

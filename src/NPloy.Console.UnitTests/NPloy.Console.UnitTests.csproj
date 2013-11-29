@@ -61,6 +61,7 @@
     <Compile Include="Commands\InstallRoleCommandTests.cs" />
     <Compile Include="Commands\StartPackageCommandTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Support\NPloyConfigurationTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

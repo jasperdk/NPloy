@@ -27,8 +27,7 @@ namespace NPloy.Console.UnitTests.Commands
                                .Returns(new[] {"NPloy.Samples.WindowsService.1.0.0.0"});
 
             // Act
-            _command.WorkingDirectory = @"d:\";
-            _command.Run(new string[0]);
+            _command.Run(new []{@"d:\"});
 
             // Assert
             Assert.True(true,"TODO");

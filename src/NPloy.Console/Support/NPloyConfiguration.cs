@@ -6,7 +6,7 @@ namespace NPloy.Support
     public interface INPloyConfiguration
     {
         IList<string> GetFiles(string s);
-        Dictionary<string,string> GetProperties(string environment);
+        Dictionary<string, string> GetProperties(string package, string environment);
         bool FileExists(string filePath);
         bool HasInstalledPackages(string workingDirectory);
         IEnumerable<string> GetInstalledPackges(string workingDirectory);
@@ -17,21 +17,33 @@ namespace NPloy.Support
     {
         public IList<string> GetFiles(string path)
         {
+            if(!Directory.Exists(path))
+                return new List<string>();
             return Directory.GetFiles(path);
         }
 
-        public Dictionary<string,string> GetProperties(string environment)
+        public Dictionary<string, string> GetProperties(string package, string environment)
         {
             var result = new Dictionary<string, string>();
-            var lines = File.ReadAllLines(@".nploy\environments\" + environment + @"\env.prop");
-            foreach (var line in lines)
-            {
-                var items = line.Split('=');
-                var key = items[0].Replace(".", "");
-                var value = line.Remove(0, items[0].Length + 1);
-                result.Add(key, value);
-            }
+            GetPropertiesFromFile(@".nploy\environments\default.prop", result);
+            GetPropertiesFromFile(@".nploy\environments\" + environment + @"\env.prop", result);
+            GetPropertiesFromFile(@".nploy\environments\" + environment + @"\" + package + ".prop", result);
             return result;
+        }
+
+        private static void GetPropertiesFromFile(string file, Dictionary<string, string> result)
+        {
+            if (File.Exists(file))
+            {
+                var lines = File.ReadAllLines(file);
+                foreach (var line in lines)
+                {
+                    var items = line.Split('=');
+                    var key = items[0].Replace(".", "");
+                    var value = line.Remove(0, items[0].Length + 1);
+                    result[key] = value;
+                }
+            }
         }
 
         public bool FileExists(string filePath)

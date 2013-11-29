@@ -18,11 +18,11 @@ namespace NPloy.Commands
 
         public InstallPackageCommand()
             : this(new NPloyConfiguration(),
-            new PowerShellRunner())
+                   new PowerShellRunner())
         {
         }
 
-        public InstallPackageCommand(INPloyConfiguration nPloyConfiguration,IPowershellRunner powershellRunner)
+        public InstallPackageCommand(INPloyConfiguration nPloyConfiguration, IPowershellRunner powershellRunner)
         {
             _nPloyConfiguration = nPloyConfiguration;
             _powershellRunner = powershellRunner;
@@ -32,15 +32,17 @@ namespace NPloy.Commands
             HasOption("d|directory=", "Install in this directory", s => WorkingDirectory = s);
         }
 
-        public string Package { get; set; }
-        public string Environment;
+        
+        public string Package
+        {
+            get; set; }
+        
+    public string Environment;
         public string WorkingDirectory { get; set; }
 
         public override int Run(string[] remainingArguments)
         {
-            if (string.IsNullOrEmpty(Package))
-                throw new ApplicationException("Package must be set!");
-            Package = Package.Replace(' ', '.');
+            HandleArguments(remainingArguments);
             Console.WriteLine("Running install scripts in (" + WorkingDirectory + @"\" + Package + @"\App_Install" + ") for package: " + Package);
 
             string strOutput;
@@ -54,16 +56,19 @@ namespace NPloy.Commands
             return 0;
         }
 
+        private void HandleArguments(string[] remainingArguments)
+        {
+            Package = remainingArguments[0].Replace(' ', '.');
+        }
+
         private string RunCommand(string script)
         {
             var environment = Environment ?? "dev";
-            var properties = _nPloyConfiguration.GetProperties(environment);
+            var properties = _nPloyConfiguration.GetProperties(environment, Package);
             foreach (var property in properties)
             {
-               script += " -" + property.Key + @" '" +property.Value +@"'";
+                script += " -" + property.Key + @" '" + property.Value + @"'";
             }
-
-            Package = Package.Replace(' ', '.');
 
             var strOutput = _powershellRunner.RunPowershellScript(script, WorkingDirectory + @"\" + Package);
 

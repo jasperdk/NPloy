@@ -21,6 +21,7 @@ namespace NPloy.Console.UnitTests.Commands
             if (File.Exists(RoleCommandFile))
                 File.Delete(RoleCommandFile);
         }
+
         [Test, Ignore("Not implemented")]
         public void ShouldMethod()
         {

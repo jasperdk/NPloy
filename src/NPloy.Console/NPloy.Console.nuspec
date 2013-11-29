@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>NPloy.Console</id>
-    <version>0.0.0.1</version>
+    <version>0.0.0.2</version>
     <authors>Jasper Arildslund</authors>
     <owners>Jasper Arildslund</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -14,5 +14,6 @@
   </metadata>
   <files>
     <file src="bin\debug\*.*" target="tools" />
+    <file src="NuGetScripts\Init.ps1" target="tools" />
   </files>
 </package>

@@ -31,7 +31,7 @@ namespace NPloy.Commands
 
         public override int Run(string[] remainingArguments)
         {
-            Package = Package.Replace(' ', '.');
+            HandleArguments(remainingArguments);
 
             var applicationPath = WorkingDirectory + @"\" + Package;
 
@@ -42,6 +42,11 @@ namespace NPloy.Commands
 
             _powershellRunner.RunPowershellScript(@".\App_Install\Stop.ps1", applicationPath);
             return 0;
+        }
+
+        private void HandleArguments(string[] remainingArguments)
+        {
+            Package = remainingArguments[0].Replace(' ', '.');
         }
     }
 }

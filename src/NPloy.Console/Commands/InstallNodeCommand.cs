@@ -41,8 +41,6 @@ namespace NPloy.Commands
 
             HandleArguments(remainingArguments);
 
-            if (!Node.ToLower().EndsWith(".node"))
-                Node += ".node";
             if (!File.Exists(Node))
             {
                 Console.WriteLine("File not found: " + Node);
@@ -80,6 +78,8 @@ namespace NPloy.Commands
         {
             _installRoleCommand.WorkingDirectory = WorkingDirectory;
             Node = remainingArguments[0];
+            if (!Node.ToLower().EndsWith(".node"))
+                Node += ".node";
         }
 
         private IEnumerable<string> GetRolesFromFile()
