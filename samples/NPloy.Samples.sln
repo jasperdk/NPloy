@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NPloy.Samples.Migrations", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NPloy.Samples.Web", "NPloy.Samples.Web\NPloy.Samples.Web.csproj", "{11498B5C-7125-4F71-A997-0FCBB2123BE9}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Configuration", "Configuration", "{5C4F3477-8A16-4840-BC99-470D488FC704}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nploy", ".nploy", "{5C4F3477-8A16-4840-BC99-470D488FC704}"
 	ProjectSection(SolutionItems) = preProject
 		configuration\localhost.node = configuration\localhost.node
 		configuration\prodappserver.node = configuration\prodappserver.node
