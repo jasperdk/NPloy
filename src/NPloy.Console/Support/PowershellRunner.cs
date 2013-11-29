@@ -16,7 +16,7 @@ namespace NPloy.Support
                 StartInfo =
                 {
                     FileName = @"powershell",
-                    Arguments = script,
+                    Arguments = "-executionpolicy unrestricted " + script,
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     WorkingDirectory = workingDirectory
