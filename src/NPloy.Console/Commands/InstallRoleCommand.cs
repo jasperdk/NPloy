@@ -93,14 +93,14 @@ namespace NPloy.Commands
             }
         }
 
-        private void InstallPackages(IEnumerable<string> installedPackages)
+        private void InstallPackages(IEnumerable<string> packages)
         {
-            foreach (var installedPackage in installedPackages)
+            foreach (var package in packages)
             {
                 var installPackageCommand = new InstallPackageCommand();
                 installPackageCommand.WorkingDirectory = WorkingDirectory;
                 installPackageCommand.PackageSources = PackageSources;
-                var exitCode = installPackageCommand.Run(new[] { installedPackage });
+                var exitCode = installPackageCommand.Run(new[] { package });
                 if (exitCode > 0)
                     throw new ConsoleException(exitCode);
             }

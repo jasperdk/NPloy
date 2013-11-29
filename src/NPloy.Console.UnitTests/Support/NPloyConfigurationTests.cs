@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using NPloy.Support;
+﻿using NPloy.Support;
 using NUnit.Framework;
 
 namespace NPloy.Console.UnitTests.Support
@@ -21,6 +17,20 @@ namespace NPloy.Console.UnitTests.Support
 
             // Assert
             Assert.That(files,Is.Empty);
+        }
+
+        [Test]
+        public void GetProperties_ShouldReturnMostSpecificProperty()
+        {
+            // Arrange
+
+            // Act
+            var nployConfiguration = new NPloyConfiguration();
+            var properties = nployConfiguration.GetProperties("package","test");
+
+            // Assert
+            Assert.That(properties.Count, Is.EqualTo(1));
+            Assert.That(properties["property"], Is.EqualTo("package"));
         }
     }
 }

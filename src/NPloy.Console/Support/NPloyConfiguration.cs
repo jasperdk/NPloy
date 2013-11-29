@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace NPloy.Support
@@ -24,6 +25,7 @@ namespace NPloy.Support
 
         public Dictionary<string, string> GetProperties(string package, string environment)
         {
+            Console.WriteLine("Loading properties for environment: " + environment);
             var result = new Dictionary<string, string>();
             GetPropertiesFromFile(@".nploy\environments\default.prop", result);
             GetPropertiesFromFile(@".nploy\environments\" + environment + @"\env.prop", result);

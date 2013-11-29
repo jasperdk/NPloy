@@ -64,6 +64,15 @@
     <Compile Include="Support\NPloyConfigurationTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include=".nploy\environments\default.prop">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include=".nploy\environments\test\package.prop">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include=".nploy\environments\test\env.prop">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -71,6 +80,9 @@
       <Project>{D9F2C39D-32DB-4037-AEB8-C21317EBDD2F}</Project>
       <Name>NPloy.Console</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include=".nploy\roles\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

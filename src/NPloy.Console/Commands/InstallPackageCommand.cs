@@ -52,14 +52,15 @@ namespace NPloy.Commands
 
                 string strOutput;
                 var files = _nPloyConfiguration.GetFiles(WorkingDirectory + @"\" + installedPackage + @"\App_Install\");
-                foreach (var file in files.Where(f => Path.GetFileName(f).ToLower().StartsWith("install")).ToArray())
+                foreach (var file in files.Where(f => Path.GetFileName(f).ToLower().StartsWith("install")).OrderBy(n => n).ToArray())
                 {
                     Console.WriteLine("Running install script : " + file);
                     RunCommand(installedPackage, @"App_Install\" + Path.GetFileName(file));
-                    using (StreamWriter sw = File.AppendText(WorkingDirectory + @"\packages.config"))
-                    {
-                        sw.WriteLine(installedPackage);
-                    }
+                }
+
+                using (StreamWriter sw = File.AppendText(WorkingDirectory + @"\packages.config"))
+                {
+                    sw.WriteLine(installedPackage);
                 }
 
                 return 0;
@@ -78,7 +79,7 @@ namespace NPloy.Commands
         private string RunCommand(string installedPackage, string script)
         {
             var environment = Environment ?? "dev";
-            var properties = _nPloyConfiguration.GetProperties(environment, Package);
+            var properties = _nPloyConfiguration.GetProperties(Package, environment);
             foreach (var property in properties)
             {
                 script += " -" + property.Key + @" '" + property.Value + @"'";
@@ -141,6 +142,5 @@ namespace NPloy.Commands
 
             return installedPackage.Replace(' ', '.');
         }
-
     }
 }
