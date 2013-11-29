@@ -21,32 +21,40 @@ namespace NPloy.Commands
             _nPloyConfiguration = nPloyConfiguration;
             _powershellRunner = powershellRunner;
             IsCommand("StopPackage", "StopPackage");
-            HasAdditionalArguments(1, "Package");
+            HasAdditionalArguments(1, "InstalledPackage");
             HasOption("d|directory=", "Stop in this directory", s => WorkingDirectory = s);
         }
 
-        public string Package;
+        public string InstalledPackage;
 
         public string WorkingDirectory { get; set; }
 
         public override int Run(string[] remainingArguments)
         {
-            HandleArguments(remainingArguments);
+            try
+            {
+                HandleArguments(remainingArguments);
+                Console.WriteLine("Stop package: " + InstalledPackage);
 
-            var applicationPath = WorkingDirectory + @"\" + Package;
+                var applicationPath = WorkingDirectory + @"\" + InstalledPackage;
 
-            if (!_nPloyConfiguration.FileExists(applicationPath + @"\App_Install\Stop.ps1"))
+                if (!_nPloyConfiguration.FileExists(applicationPath + @"\App_Install\Stop.ps1"))
+                    return 0;
+
+                Console.WriteLine("Running stop scripts for package: " + InstalledPackage);
+
+                _powershellRunner.RunPowershellScript(@".\App_Install\Stop.ps1", applicationPath);
                 return 0;
-
-            Console.WriteLine("Running stop scripts for package: " + Package);
-
-            _powershellRunner.RunPowershellScript(@".\App_Install\Stop.ps1", applicationPath);
-            return 0;
+            }
+            catch (ConsoleException c)
+            {
+                return c.ExitCode;
+            }
         }
 
         private void HandleArguments(string[] remainingArguments)
         {
-            Package = remainingArguments[0].Replace(' ', '.');
+            InstalledPackage = remainingArguments[0].Replace(' ', '.');
         }
     }
 }

@@ -27,25 +27,33 @@ namespace NPloy.Commands
 
         public override int Run(string[] remainingArguments)
         {
-            if (!_nPloyConfiguration.HasInstalledPackages(WorkingDirectory))
+            try
             {
-                Console.WriteLine("Nothing to stop");
+                if (!_nPloyConfiguration.HasInstalledPackages(WorkingDirectory))
+                {
+                    Console.WriteLine("Nothing to start");
+                    return 0;
+                }
+                Console.WriteLine("Start node in: " + WorkingDirectory);
+                var installedPackages = _nPloyConfiguration.GetInstalledPackges(WorkingDirectory);
+
+                foreach (var package in installedPackages)
+                {
+                    var startPackageCommand = new StartPackageCommand
+                        {
+                            WorkingDirectory = WorkingDirectory
+                        };
+                    var result = startPackageCommand.Run(new[] { package });
+                    if (result > 0)
+                        return result;
+                }
+
                 return 0;
             }
-            var installedPackages = _nPloyConfiguration.GetInstalledPackges(WorkingDirectory);
-
-            foreach (var package in installedPackages)
+            catch (ConsoleException c)
             {
-                var startPackageCommand = new StartPackageCommand
-                    {
-                        WorkingDirectory = WorkingDirectory
-                    };
-                var result = startPackageCommand.Run(new[] { package });
-                if (result > 0)
-                    return result;
+                return c.ExitCode;
             }
-
-            return 0;
         }
     }
 }

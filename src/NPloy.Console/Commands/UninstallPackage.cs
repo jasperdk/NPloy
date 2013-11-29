@@ -31,18 +31,25 @@ namespace NPloy.Commands
 
         public override int Run(string[] remainingArguments)
         {
+            try
+            {
+                HandleArguments(remainingArguments);
+                Console.WriteLine("Uninstall package: " + Package);
 
-            HandleArguments(remainingArguments);
+                var applicationPath = WorkingDirectory + @"\" + Package;
 
-            var applicationPath = WorkingDirectory + @"\" + Package;
+                if (!_nPloyConfiguration.FileExists(applicationPath + @"\App_Install\Uninstall.ps1"))
+                    return 0;
 
-            if (!_nPloyConfiguration.FileExists(applicationPath + @"\App_Install\Uninstall.ps1"))
+                Console.WriteLine("Running uninstall scripts for package: " + Package);
+
+                _powershellRunner.RunPowershellScript(@".\App_Install\Uninstall.ps1", applicationPath);
                 return 0;
-
-            Console.WriteLine("Running uninstall scripts for package: " + Package);
-
-            _powershellRunner.RunPowershellScript(@".\App_Install\Uninstall.ps1", applicationPath);
-            return 0;
+            }
+            catch (ConsoleException c)
+            {
+                return c.ExitCode;
+            }
         }
 
         private void HandleArguments(string[] remainingArguments)

@@ -21,32 +21,40 @@ namespace NPloy.Commands
             _nPloyConfiguration = nPloyConfiguration;
             _powershellRunner = powershellRunner;
             IsCommand("StartPackage", "StartPackage");
-            HasAdditionalArguments(1, "Package");
+            HasAdditionalArguments(1, "InstalledPackage");
             HasOption("d|directory=", "Start from this directory", s => WorkingDirectory = s);
         }
 
-        public string Package;
+        public string InstalledPackage;
 
         public string WorkingDirectory { get; set; }
 
         public override int Run(string[] remainingArguments)
         {
-            HandleArguments(remainingArguments);
+            try
+            {
+                HandleArguments(remainingArguments);
+                Console.WriteLine("Start package: " + InstalledPackage);
 
-            var applicationPath = WorkingDirectory + @"\" + Package;
+                var applicationPath = WorkingDirectory + @"\" + InstalledPackage;
 
-            if (!_nPloyConfiguration.FileExists(applicationPath + @"\App_Install\Start.ps1"))
+                if (!_nPloyConfiguration.FileExists(applicationPath + @"\App_Install\Start.ps1"))
+                    return 0;
+
+                Console.WriteLine("Running start scripts for package: " + InstalledPackage);
+
+                _powershellRunner.RunPowershellScript(@".\App_Install\Start.ps1", applicationPath);
                 return 0;
-
-            Console.WriteLine("Running start scripts for package: " + Package);
-
-            _powershellRunner.RunPowershellScript(@".\App_Install\Start.ps1", applicationPath);
-            return 0;
+            }
+            catch (ConsoleException c)
+            {
+                return c.ExitCode;
+            }
         }
 
         private void HandleArguments(string[] remainingArguments)
         {
-            Package = remainingArguments[0].Replace(' ', '.');
+            InstalledPackage = remainingArguments[0].Replace(' ', '.');
         }
     }
 }

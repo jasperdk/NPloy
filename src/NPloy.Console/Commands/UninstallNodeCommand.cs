@@ -27,31 +27,39 @@ namespace NPloy.Commands
 
         public override int Run(string[] remainingArguments)
         {
-            if (!_nPloyConfiguration.HasInstalledPackages(WorkingDirectory))
+            try
             {
-                Console.WriteLine("Nothing to uninstall");
-                return 0;
-            }
-            var installedPackages = _nPloyConfiguration.GetInstalledPackges(WorkingDirectory);
-
-            var stopNodeCommand = new StopNodeCommand
+                if (!_nPloyConfiguration.HasInstalledPackages(WorkingDirectory))
                 {
-                    WorkingDirectory = WorkingDirectory
-                };
-            stopNodeCommand.Run(new string[0]);
+                    Console.WriteLine("Nothing to uninstall");
+                    return 0;
+                }
+                Console.WriteLine("Uninstall node in: " + WorkingDirectory);
+                var installedPackages = _nPloyConfiguration.GetInstalledPackges(WorkingDirectory);
 
-            foreach (var package in installedPackages)
-            {
-                var uninstallPackageCommand = new UninstallPackageCommand
+                var stopNodeCommand = new StopNodeCommand
                     {
                         WorkingDirectory = WorkingDirectory
                     };
-                uninstallPackageCommand.Run(new[] { package });
+                stopNodeCommand.Run(new string[0]);
+
+                foreach (var package in installedPackages)
+                {
+                    var uninstallPackageCommand = new UninstallPackageCommand
+                        {
+                            WorkingDirectory = WorkingDirectory
+                        };
+                    uninstallPackageCommand.Run(new[] { package });
+                }
+
+                _nPloyConfiguration.PackagesHasBeenUninstalled(WorkingDirectory);
+
+                return 0;
             }
-
-            _nPloyConfiguration.PackagesHasBeenUninstalled(WorkingDirectory);
-
-            return 0;
+            catch (ConsoleException c)
+            {
+                return c.ExitCode;
+            }
         }
     }
 }

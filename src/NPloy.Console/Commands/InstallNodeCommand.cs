@@ -31,34 +31,43 @@ namespace NPloy.Commands
 
         public override int Run(string[] remainingArguments)
         {
-            var packageFileName = !string.IsNullOrEmpty(WorkingDirectory) ? WorkingDirectory + @"\" + PackageFileName : PackageFileName;
-
-            if (File.Exists(packageFileName))
+            try
             {
-                Console.WriteLine("Node has already been installed. Uninstall or update!");
-                return -1;
+                var packageFileName = !string.IsNullOrEmpty(WorkingDirectory) ? WorkingDirectory + @"\" + PackageFileName : PackageFileName;
+
+                if (File.Exists(packageFileName))
+                {
+                    Console.WriteLine("Node has already been installed. Uninstall or update!");
+                    return -1;
+                }
+
+                HandleArguments(remainingArguments);
+
+                if (!File.Exists(Node))
+                {
+                    Console.WriteLine("File not found: " + Node);
+                    return 1;
+                }
+
+                Console.WriteLine("Installing node: " + Node);
+                var roles = GetRolesFromFile();
+                string environment = GetEnvironmentFromFile();
+                foreach (var role in roles)
+                {
+                    _installRoleCommand.WorkingDirectory = WorkingDirectory;
+                    _installRoleCommand.Environment = environment;
+                    _installRoleCommand.PackageSources = PackageSources;
+                    var result = _installRoleCommand.Run(new[] { role });
+                    if (result > 0)
+                        return result;
+                }
+
+                return 0;
             }
-
-            HandleArguments(remainingArguments);
-
-            if (!File.Exists(Node))
+            catch (ConsoleException c)
             {
-                Console.WriteLine("File not found: " + Node);
-                return 1;
+                return c.ExitCode;
             }
-
-            Console.WriteLine("Installing node: " + Node);
-            var roles = GetRolesFromFile();
-            string environment = GetEnvironmentFromFile();
-            foreach (var role in roles)
-            {
-                _installRoleCommand.WorkingDirectory = WorkingDirectory;
-                _installRoleCommand.Environment = environment;
-                _installRoleCommand.PackageSources = PackageSources;
-                _installRoleCommand.Run(new []{role});
-            }
-
-            return 0;
         }
 
         private string GetEnvironmentFromFile()
