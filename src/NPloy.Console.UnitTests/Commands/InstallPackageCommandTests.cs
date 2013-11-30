@@ -29,7 +29,7 @@ namespace NPloy.Console.UnitTests.Commands
             // Arrange
 
             _nugetRunner.Setup(n => n.RunNuGetInstall("NPloy.Samples.WindowsService", null, null, null))
-                        .Returns("NPloy.Samples.WindowsService.1.0.0.0");
+                        .Returns(new List<string>{"NPloy.Samples.WindowsService.1.0.0.0"});
 
             _nPloyConfiguration.Setup(f => f.GetFiles(@"\NPloy.Samples.WindowsService.1.0.0.0\App_Install\"))
                             .Returns(new List<string> { @"d:\NPloy.Samples.WindowsService.1.0.0.0\app_install\install.ps1" });

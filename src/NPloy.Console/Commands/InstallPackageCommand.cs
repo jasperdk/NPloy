@@ -53,21 +53,11 @@ namespace NPloy.Commands
             {
                 HandleArguments(remainingArguments);
                 Console.WriteLine("Install package: " + Package);
-                var installedPackage = NugetInstallPackage(Package, PackageSources);
+                var installedPackages = NugetInstallPackage(Package, PackageSources);
 
-                Console.WriteLine("Running install scripts in (" + WorkingDirectory + @"\" + installedPackage + @"\App_Install" + ") for package: " + Package);
-
-                string strOutput;
-                var files = _nPloyConfiguration.GetFiles(WorkingDirectory + @"\" + installedPackage + @"\App_Install\");
-                foreach (var file in files.Where(f => Path.GetFileName(f).ToLower().StartsWith("install")).OrderBy(n => n).ToArray())
+                foreach (var installedPackage in installedPackages)
                 {
-                    Console.WriteLine("Running install script : " + file);
-                    RunCommand(installedPackage, @"App_Install\" + Path.GetFileName(file));
-                }
-
-                using (StreamWriter sw = File.AppendText(WorkingDirectory + @"\packages.config"))
-                {
-                    sw.WriteLine(installedPackage);
+                    RunInstallScripts(installedPackage);
                 }
 
                 return 0;
@@ -75,6 +65,26 @@ namespace NPloy.Commands
             catch (ConsoleException c)
             {
                 return c.ExitCode;
+            }
+        }
+
+        private void RunInstallScripts(string installedPackage)
+        {
+            Console.WriteLine("Running install scripts in (" + WorkingDirectory + @"\" + installedPackage + @"\App_Install" +
+                              ") for package: " + Package);
+
+            string strOutput;
+            var files = _nPloyConfiguration.GetFiles(WorkingDirectory + @"\" + installedPackage + @"\App_Install\");
+            foreach (var file in files.Where(f => Path.GetFileName(f).ToLower().StartsWith("install")).OrderBy(n => n).ToArray()
+                )
+            {
+                Console.WriteLine("Running install script : " + file);
+                RunCommand(installedPackage, @"App_Install\" + Path.GetFileName(file));
+            }
+
+            using (StreamWriter sw = File.AppendText(WorkingDirectory + @"\packages.config"))
+            {
+                sw.WriteLine(installedPackage);
             }
         }
 
@@ -86,7 +96,7 @@ namespace NPloy.Commands
         private string RunCommand(string installedPackage, string script)
         {
             var environment = Environment ?? "dev";
-            var properties = _nPloyConfiguration.GetProperties(Package, environment,ConfigurationDirectory);
+            var properties = _nPloyConfiguration.GetProperties(Package, environment, ConfigurationDirectory);
             foreach (var property in properties)
             {
                 script += " -" + property.Key + @" '" + property.Value + @"'";
@@ -97,7 +107,7 @@ namespace NPloy.Commands
             return strOutput;
         }
 
-        private string NugetInstallPackage(string package, string packageSources)
+        private IList<string> NugetInstallPackage(string package, string packageSources)
         {
             if (!string.IsNullOrEmpty(WorkingDirectory) && !Directory.Exists(WorkingDirectory))
                 Directory.CreateDirectory(WorkingDirectory);

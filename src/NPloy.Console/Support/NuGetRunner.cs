@@ -1,10 +1,12 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace NPloy.Support
 {
     public interface INuGetRunner
     {
-        string RunNuGetInstall(string package, string packageSources, string nugetPath, string workingDirectory);
+        IList<string> RunNuGetInstall(string package, string packageSources, string nugetPath, string workingDirectory);
     }
 
     public class NuGetRunner : INuGetRunner
@@ -22,7 +24,7 @@ namespace NPloy.Support
             _commandRunner = commandRunner;
         }
 
-        public string RunNuGetInstall(string package, string packageSources, string nugetPath, string workingDirectory)
+        public IList<string> RunNuGetInstall(string package, string packageSources, string nugetPath, string workingDirectory)
         {
             var packageSourcesArgument = "";
             if (!string.IsNullOrEmpty(packageSources))
@@ -35,30 +37,28 @@ namespace NPloy.Support
             if (!string.IsNullOrEmpty(nugetPath))
                 nugetPath += @"\";
 
-            var installedPackage = "";
+            var installedPackages = new List<string>();
 
             var strOutput = _commandRunner.RunCommand(nugetPath + @"nuget", string.Format(@"install {0} {1} {2}", package, outputDirectoryArgument, packageSourcesArgument), workingDirectory);
 
-            var m = Regex.Match(strOutput, @"Successfully installed '([^']*)'\.", RegexOptions.CultureInvariant);
-            if (m.Success)
-            {
-                installedPackage = m.Groups[1].Value;
-            }
-            else
-            {
-                m = Regex.Match(strOutput, @"'([^']*)' already installed\.", RegexOptions.CultureInvariant);
+            var matches = Regex.Matches(strOutput, @"Successfully installed '([^']*)'\.", RegexOptions.CultureInvariant);
+            foreach (Match m in matches)
                 if (m.Success)
                 {
-                    installedPackage = m.Groups[1].Value;
+                    installedPackages.Add(m.Groups[1].Value);
                 }
-                else
-                {
-                    //Unknown result
-                    throw new ConsoleException(2);
-                }
-            }
 
-            return installedPackage.Replace(' ', '.');
+            matches = Regex.Matches(strOutput, @"'([^']*)' already installed\.", RegexOptions.CultureInvariant);
+            foreach (Match m in matches)
+                if (m.Success)
+                {
+                    installedPackages.Add(m.Groups[1].Value);
+                }
+
+            if (!installedPackages.Any())
+                throw new ConsoleException(2);
+
+            return installedPackages.Select(installedPackage => installedPackage.Replace(' ', '.')).ToList();
         }
     }
 }
