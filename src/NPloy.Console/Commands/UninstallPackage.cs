@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using ManyConsole;
 using NPloy.Support;
 
@@ -34,6 +35,7 @@ namespace NPloy.Commands
             try
             {
                 HandleArguments(remainingArguments);
+                SetDefaultOptionValues();
                 Console.WriteLine("Uninstall package: " + Package);
 
                 var applicationPath = WorkingDirectory + @"\" + Package;
@@ -55,6 +57,13 @@ namespace NPloy.Commands
         private void HandleArguments(string[] remainingArguments)
         {
             Package = remainingArguments[0].Replace(' ', '.');
+        }
+
+        private void SetDefaultOptionValues()
+        {
+            var currentDirectory = Directory.GetCurrentDirectory();
+            if (string.IsNullOrEmpty(WorkingDirectory))
+                WorkingDirectory = currentDirectory;
         }
     }
 }

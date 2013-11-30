@@ -28,15 +28,15 @@ namespace NPloy.Console.UnitTests.Commands
         {
             // Arrange
 
-            _nugetRunner.Setup(n => n.RunNuGetInstall("NPloy.Samples.WindowsService", null, null, null))
-                        .Returns(new List<string>{"NPloy.Samples.WindowsService.1.0.0.0"});
+            _nugetRunner.Setup(n => n.RunNuGetInstall("NPloy.Samples.WindowsService", null, null, It.IsAny<string>()))
+                        .Returns(new List<string> { "NPloy.Samples.WindowsService.1.0.0.0" });
 
-            _nPloyConfiguration.Setup(f => f.GetFiles(@"\NPloy.Samples.WindowsService.1.0.0.0\App_Install\"))
+            _nPloyConfiguration.Setup(f => f.GetFiles(It.Is<string>(s => s.EndsWith(@"NPloy.Samples.WindowsService.1.0.0.0\App_Install\"))))
                             .Returns(new List<string> { @"d:\NPloy.Samples.WindowsService.1.0.0.0\app_install\install.ps1" });
 
             var properties = new Dictionary<string, string>();
             properties.Add("propkey", "propvalue");
-            _nPloyConfiguration.Setup(n => n.GetProperties("NPloy.Samples.WindowsService", "test", null)).Returns(properties);
+            _nPloyConfiguration.Setup(n => n.GetProperties("NPloy.Samples.WindowsService", "test", It.IsAny<string>())).Returns(properties);
 
 
             // Act
@@ -47,7 +47,7 @@ namespace NPloy.Console.UnitTests.Commands
             _powershellRunner.Verify(
                 p =>
                 p.RunPowershellScript(@"App_Install\install.ps1 -propkey 'propvalue'",
-                                      @"\NPloy.Samples.WindowsService.1.0.0.0"), Times.Once());
+                                      It.Is<string>(s => s.EndsWith(@"\NPloy.Samples.WindowsService.1.0.0.0"))), Times.Once());
 
         }
     }

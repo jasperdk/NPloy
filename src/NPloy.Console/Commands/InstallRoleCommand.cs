@@ -42,6 +42,7 @@ namespace NPloy.Commands
             try
             {
                 HandleArguments(remainingArguments);
+                SetDefaultOptions();
                 var packages = new List<string>();
                 var roleFile = @"roles\" + Role;
                 if (!string.IsNullOrEmpty(ConfigurationDirectory))
@@ -82,10 +83,19 @@ namespace NPloy.Commands
                 return c.ExitCode;
             }
         }
-
+        
         private void HandleArguments(string[] remainingArguments)
         {
             Role = remainingArguments[0];
+        }
+
+        private void SetDefaultOptions()
+        {
+            var currentDirectory = Directory.GetCurrentDirectory();
+            if (string.IsNullOrEmpty(WorkingDirectory))
+                WorkingDirectory = currentDirectory;
+            if (string.IsNullOrEmpty(ConfigurationDirectory))
+                ConfigurationDirectory = currentDirectory;
         }
 
         private void StartPackages(IEnumerable<string> installedPackages)

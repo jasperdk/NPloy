@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using ManyConsole;
 using NPloy.Support;
@@ -20,7 +21,7 @@ namespace NPloy.Commands
             _nPloyConfiguration = nPloyConfiguration;
             IsCommand("StopNode", "StopNode");
             //HasAdditionalArguments(1, "Node");
-            HasOption("d|directory=", "Stop installed packages in this directory", s => WorkingDirectory = s);
+            HasOption("d|directory=", "Stop installed packages in this directory", s => WorkingDirectory =s);
         }
 
         //public string Node;
@@ -30,6 +31,8 @@ namespace NPloy.Commands
         {
             try
             {
+                SetDefaultOptionValues();
+
                 if (!_nPloyConfiguration.HasInstalledPackages(WorkingDirectory))
                 {
                     Console.WriteLine("Nothing to stop");
@@ -55,6 +58,13 @@ namespace NPloy.Commands
             {
                 return c.ExitCode;
             }
+        }
+
+        private void SetDefaultOptionValues()
+        {
+            var currentDirectory = Directory.GetCurrentDirectory();
+            if (string.IsNullOrEmpty(WorkingDirectory))
+                WorkingDirectory = currentDirectory;
         }
     }
 }

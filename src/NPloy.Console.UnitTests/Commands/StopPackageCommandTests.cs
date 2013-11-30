@@ -24,7 +24,7 @@ namespace NPloy.Console.UnitTests.Commands
         public void Run_ShouldCallPowershellScript()
         {
             // Arrange
-            _nPloyConfiguration.Setup(f => f.FileExists(@"\NPloy.Samples.WindowsService.1.0.0.0\App_Install\Stop.ps1"))
+            _nPloyConfiguration.Setup(f => f.FileExists(It.Is<string>(s=>s.EndsWith(@"\NPloy.Samples.WindowsService.1.0.0.0\App_Install\Stop.ps1"))))
                             .Returns(true);
 
             // Act
@@ -33,7 +33,7 @@ namespace NPloy.Console.UnitTests.Commands
             // Assert
             _powershellRunner.Verify(
                 p =>
-                p.RunPowershellScript(@".\App_Install\Stop.ps1", @"\NPloy.Samples.WindowsService.1.0.0.0"),
+                p.RunPowershellScript(@".\App_Install\Stop.ps1", It.Is<string>(s=>s.EndsWith(@"\NPloy.Samples.WindowsService.1.0.0.0"))),
                 Times.Once());
         }
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using ManyConsole;
 using NPloy.Support;
 
@@ -29,6 +30,8 @@ namespace NPloy.Commands
         {
             try
             {
+                SetDefaultOptionValues();
+
                 if (!_nPloyConfiguration.HasInstalledPackages(WorkingDirectory))
                 {
                     Console.WriteLine("Nothing to start");
@@ -54,6 +57,13 @@ namespace NPloy.Commands
             {
                 return c.ExitCode;
             }
+        }
+        
+        private void SetDefaultOptionValues()
+        {
+            var currentDirectory = Directory.GetCurrentDirectory();
+            if (string.IsNullOrEmpty(WorkingDirectory))
+                WorkingDirectory = currentDirectory;
         }
     }
 }
