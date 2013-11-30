@@ -38,7 +38,7 @@ namespace NPloy.Commands
                 SetDefaultOptionValues();
                 Console.WriteLine("Start package: " + InstalledPackage);
 
-                var applicationPath = WorkingDirectory + @"\" + InstalledPackage;
+                var applicationPath = Path.Combine(WorkingDirectory ,InstalledPackage);
 
                 if (!_nPloyConfiguration.FileExists(applicationPath + @"\App_Install\Start.ps1"))
                     return 0;

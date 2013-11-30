@@ -38,7 +38,7 @@ namespace NPloy.Commands
                 SetDefaultOptionValues();
                 Console.WriteLine("Uninstall package: " + Package);
 
-                var applicationPath = WorkingDirectory + @"\" + Package;
+                var applicationPath = Path.Combine(WorkingDirectory, Package);
 
                 if (!_nPloyConfiguration.FileExists(applicationPath + @"\App_Install\Uninstall.ps1"))
                     return 0;

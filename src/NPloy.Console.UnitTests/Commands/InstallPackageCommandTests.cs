@@ -31,7 +31,7 @@ namespace NPloy.Console.UnitTests.Commands
             _nugetRunner.Setup(n => n.RunNuGetInstall("NPloy.Samples.WindowsService", null, null, It.IsAny<string>()))
                         .Returns(new List<string> { "NPloy.Samples.WindowsService.1.0.0.0" });
 
-            _nPloyConfiguration.Setup(f => f.GetFiles(It.Is<string>(s => s.EndsWith(@"NPloy.Samples.WindowsService.1.0.0.0\App_Install\"))))
+            _nPloyConfiguration.Setup(f => f.GetFiles(It.Is<string>(s => s.EndsWith(@"NPloy.Samples.WindowsService.1.0.0.0\App_Install"))))
                             .Returns(new List<string> { @"d:\NPloy.Samples.WindowsService.1.0.0.0\app_install\install.ps1" });
 
             var properties = new Dictionary<string, string>();

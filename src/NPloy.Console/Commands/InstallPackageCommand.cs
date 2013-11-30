@@ -30,14 +30,14 @@ namespace NPloy.Commands
             _nPloyConfiguration = nPloyConfiguration;
             _powershellRunner = powershellRunner;
             _nuGetRunner = nuGetRunner;
-            
+
             IsCommand("InstallPackage", "InstallPackage");
             HasAdditionalArguments(1, "Package");
             HasOption("environment", "", e => Environment = e);
-            HasOption("d|directory=", "Install in this directory",s => WorkingDirectory=s);
+            HasOption("d|directory=", "Install in this directory", s => WorkingDirectory = s);
             HasOption("p|packagesources=", "Packagesources", s => PackageSources = s);
-            HasOption("c|configuration=", "NPloy configuration directory",s => ConfigurationDirectory=s);
-            HasOption("n|nuget=", "NuGet console path", s => NuGetPath = s??".nuget");
+            HasOption("c|configuration=", "NPloy configuration directory", s => ConfigurationDirectory = s);
+            HasOption("n|nuget=", "NuGet console path", s => NuGetPath = s ?? ".nuget");
         }
 
         public string Package { get; set; }
@@ -81,14 +81,12 @@ namespace NPloy.Commands
 
         private void RunInstallScripts(string installedPackage)
         {
-            var workingDirectory = WorkingDirectory;
-            if (!string.IsNullOrEmpty(workingDirectory))
-                workingDirectory += @"\";
-            Console.WriteLine("Running install scripts in (" + workingDirectory + installedPackage + @"\App_Install" +
-                              ") for package: " + Package);
+            var installedPackageScriptPath = Path.Combine(WorkingDirectory, installedPackage, @"App_Install");
+
+            Console.WriteLine("Running install scripts in (" + installedPackageScriptPath + ") for package: " + Package);
 
             string strOutput;
-            var files = _nPloyConfiguration.GetFiles(workingDirectory + installedPackage + @"\App_Install\");
+            var files = _nPloyConfiguration.GetFiles(installedPackageScriptPath);
             foreach (var file in files.Where(f => Path.GetFileName(f).ToLower().StartsWith("install")).OrderBy(n => n).ToArray()
                 )
             {
@@ -96,7 +94,7 @@ namespace NPloy.Commands
                 RunCommand(installedPackage, @"App_Install\" + Path.GetFileName(file));
             }
 
-            using (StreamWriter sw = File.AppendText(WorkingDirectory + @"\packages.config"))
+            using (StreamWriter sw = File.AppendText(Path.Combine(WorkingDirectory, "packages.config")))
             {
                 sw.WriteLine(installedPackage);
             }
@@ -110,14 +108,13 @@ namespace NPloy.Commands
         private string RunCommand(string installedPackage, string script)
         {
             var environment = Environment ?? "dev";
-            Console.WriteLine("config2: "+ConfigurationDirectory);
             var properties = _nPloyConfiguration.GetProperties(Package, environment, ConfigurationDirectory);
             foreach (var property in properties)
             {
                 script += " -" + property.Key + @" '" + property.Value + @"'";
             }
 
-            var strOutput = _powershellRunner.RunPowershellScript(script, WorkingDirectory + @"\" + installedPackage);
+            var strOutput = _powershellRunner.RunPowershellScript(script, Path.Combine(WorkingDirectory, installedPackage));
 
             return strOutput;
         }

@@ -19,7 +19,7 @@ namespace NPloy.Commands
             _installRoleCommand = installRoleCommand;
             IsCommand("InstallNode", "InstallNode");
             HasAdditionalArguments(1, "Node");
-            HasOption("d|directory=", "Install to this directory",s => WorkingDirectory = s);
+            HasOption("d|directory=", "Install to this directory", s => WorkingDirectory = s);
             HasOption("p|packagesources=", "NuGet packagesources", s => PackageSources = s);
             HasOption("n|nuget=", "NuGet console path", s => NuGetPath = s);
         }
@@ -36,7 +36,7 @@ namespace NPloy.Commands
             try
             {
                 SetDefaultOptionValues();
-                var packageFileName = !string.IsNullOrEmpty(WorkingDirectory) ? WorkingDirectory + @"\" + PackageFileName : PackageFileName;
+                var packageFileName = !string.IsNullOrEmpty(WorkingDirectory) ? Path.Combine(WorkingDirectory, PackageFileName) : PackageFileName;
 
                 if (File.Exists(packageFileName))
                 {

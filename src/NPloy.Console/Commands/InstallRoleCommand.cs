@@ -44,9 +44,7 @@ namespace NPloy.Commands
                 HandleArguments(remainingArguments);
                 SetDefaultOptions();
                 var packages = new List<string>();
-                var roleFile = @"roles\" + Role;
-                if (!string.IsNullOrEmpty(ConfigurationDirectory))
-                    roleFile = ConfigurationDirectory + @"\" + roleFile;
+                var roleFile = Path.Combine(ConfigurationDirectory ,"roles", Role);
 
                 string subFolder = "";
                 if (Role.ToLower().EndsWith(".role") && File.Exists(roleFile))
@@ -83,7 +81,7 @@ namespace NPloy.Commands
                 return c.ExitCode;
             }
         }
-        
+
         private void HandleArguments(string[] remainingArguments)
         {
             Role = remainingArguments[0];
