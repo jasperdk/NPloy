@@ -5,6 +5,6 @@ Task Build {
 }
 
 Task Pack -depends Build {
-   Exec { nuget pack NPloy.Samples.WindowsService\NPloy.Samples.WindowsService.nuspec -NoPackageAnalysis -OutputDirectory d:\temp\packages }
-   Exec { xcopy /y /e .nploy\*.* d:\temp\apps }
+   Exec { nuget pack NPloy.Samples.WindowsService\NPloy.Samples.WindowsService.nuspec -NoPackageAnalysis -OutputDirectory ..\packages }
+   Exec { xcopy /y /e .nploy\*.* ..\install\.nploy\}
 }

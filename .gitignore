@@ -152,3 +152,6 @@ $RECYCLE.BIN/
 
 /src/NPloy.Web/App_Data
 /samples/_PublishedWebsites
+/install
+
+/src/*TestResult.xml

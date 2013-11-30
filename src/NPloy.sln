@@ -26,6 +26,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NPloy.Web", "NPloy.Web\NPlo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NPloy.Web.UnitTests", "NPloy.Web.UnitTests\NPloy.Web.UnitTests.csproj", "{3B049CEE-FF04-439A-ADCF-B00E04CBC9BD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NPloy.Console.IntegrationTests", "NPloy.Console.IntegrationTests\NPloy.Console.IntegrationTests.csproj", "{02578314-0EBC-4D55-95CA-33CC2B3B37B5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -52,6 +54,10 @@ Global
 		{3B049CEE-FF04-439A-ADCF-B00E04CBC9BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3B049CEE-FF04-439A-ADCF-B00E04CBC9BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3B049CEE-FF04-439A-ADCF-B00E04CBC9BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02578314-0EBC-4D55-95CA-33CC2B3B37B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02578314-0EBC-4D55-95CA-33CC2B3B37B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02578314-0EBC-4D55-95CA-33CC2B3B37B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02578314-0EBC-4D55-95CA-33CC2B3B37B5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -59,5 +65,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{A3B3D515-5D61-4DFD-AA70-84590F4DB8FA} = {5E7EBFCD-C1EE-4276-92AB-E4A0B32BAB84}
 		{3B049CEE-FF04-439A-ADCF-B00E04CBC9BD} = {5E7EBFCD-C1EE-4276-92AB-E4A0B32BAB84}
+		{02578314-0EBC-4D55-95CA-33CC2B3B37B5} = {5E7EBFCD-C1EE-4276-92AB-E4A0B32BAB84}
 	EndGlobalSection
 EndGlobal

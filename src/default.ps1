@@ -2,12 +2,20 @@ Task Default -depends Test
 
 Task Build {
    Exec { msbuild "NPloy.sln" }
+   Exec { xcopy /y /e NPloy.Console\bin\debug\*.* ..\install\}
 }
 
-Task Test -depends Build {
-   Exec { packages\NUnit.Runners.2.6.3\tools\nunit-console.exe NPloy.Console.UnitTests\bin\debug\NPloy.Console.UnitTests.dll /xml=TestResult.xml  }   
+Task UnitTest {
+   Exec { packages\NUnit.Runners.2.6.3\tools\nunit-console.exe NPloy.Console.UnitTests\bin\debug\NPloy.Console.UnitTests.dll /xml=UnitTestResult.xml  }      
+}
+
+Task IntegrationTest {
+   Exec { packages\NUnit.Runners.2.6.3\tools\nunit-console.exe NPloy.Console.IntegrationTests\bin\debug\NPloy.Console.IntegrationTests.dll /xml=IntegrationTestResult.xml  }      
+}
+
+Task Test -depends Build, UnitTest, IntegrationTest {
 }
 
 Task Pack -depends Test {
-   Exec { nuget pack NPloy.Console\NPloy.Console.nuspec -OutputDirectory d:\temp\packages }  
+   Exec { nuget pack NPloy.Console\NPloy.Console.nuspec -OutputDirectory ..\packages }  
 }
