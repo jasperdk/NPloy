@@ -2,18 +2,19 @@
 <package>
   <metadata>
     <id>NPloy.Console</id>
-    <version>0.0.0.2</version>
+    <title>NPloy Console</title>
+    <version>0.0.0.3</version>
     <authors>Jasper Arildslund</authors>
     <owners>Jasper Arildslund</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Simple configuration management for a windows only environment</description>
+    <description>Simple configuration and release management for a windows only environment</description>
     <licenseUrl>https://github.com/jasperdk/NPloy/blob/master/LICENSE</licenseUrl>
     <copyright>&#169; Jasper Arildslund. All rights reserved.</copyright>
     <dependencies>
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\debug\*.*" target="tools" />
+    <file src="bin\debug\NPloy.exe" target="tools" />
     <file src="NuGetScripts\Init.ps1" target="tools" />
   </files>
 </package>

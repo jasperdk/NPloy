@@ -8,7 +8,7 @@
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>NPloy</RootNamespace>
-    <AssemblyName>NPloy</AssemblyName>
+    <AssemblyName>NPloy.Console</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
@@ -34,6 +34,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LibZ.Bootstrap">
+      <HintPath>..\packages\LibZ.Bootstrap.1.0.3.7\lib\net40-client\LibZ.Bootstrap.dll</HintPath>
+    </Reference>
     <Reference Include="ManyConsole">
       <HintPath>..\packages\ManyConsole.0.4.2.17\lib\ManyConsole.dll</HintPath>
     </Reference>

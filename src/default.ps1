@@ -2,7 +2,9 @@ Task Default -depends Test
 
 Task Build {
    Exec { msbuild "NPloy.sln" }
-   Exec { xcopy /y /e NPloy.Console\bin\debug\*.* ..\install\}
+   Exec { & copy NPloy.Console\bin\debug\NPloy.Console.exe NPloy.Console\bin\debug\NPloy.exe}
+   Exec { & .\packages\LibZ.Bootstrap.1.0.3.7\tools\libz.exe inject-dll --assembly NPloy.Console\bin\debug\NPloy.exe --include NPloy.Console\bin\debug\*.dll --move }
+   Exec { & xcopy /y /e NPloy.Console\bin\debug\nploy.exe ..\install\}
 }
 
 Task UnitTest {
@@ -17,5 +19,5 @@ Task Test -depends Build, UnitTest  {
 }
 
 Task Pack -depends Test {
-   Exec { nuget pack NPloy.Console\NPloy.Console.nuspec -OutputDirectory ..\packages }  
+	Exec { nuget pack NPloy.Console\NPloy.Console.nuspec -NoPackageAnalysis -OutputDirectory ..\packages }  
 }
