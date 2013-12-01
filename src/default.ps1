@@ -8,16 +8,16 @@ Task Build {
 }
 
 Task UnitTest {
-   Exec { packages\NUnit.Runners.2.6.3\tools\nunit-console.exe NPloy.Console.UnitTests\bin\debug\NPloy.Console.UnitTests.dll /xml=UnitTestResult.xml  }      
+   Exec { & packages\NUnit.Runners.2.6.3\tools\nunit-console.exe NPloy.Console.UnitTests\bin\debug\NPloy.Console.UnitTests.dll /xml=UnitTestResult.xml  }      
 }
 
 Task IntegrationTest {
-   Exec { packages\NUnit.Runners.2.6.3\tools\nunit-console.exe NPloy.Console.IntegrationTests\bin\debug\NPloy.Console.IntegrationTests.dll /xml=IntegrationTestResult.xml  }      
+   Exec { & packages\NUnit.Runners.2.6.3\tools\nunit-console.exe NPloy.Console.IntegrationTests\bin\debug\NPloy.Console.IntegrationTests.dll /xml=IntegrationTestResult.xml  }      
 }
 
 Task Test -depends Build, UnitTest  {
 }
 
 Task Pack -depends Test {
-	Exec { nuget pack NPloy.Console\NPloy.Console.nuspec -NoPackageAnalysis -OutputDirectory ..\packages }  
+	Exec { & nuget pack NPloy.Console\NPloy.Console.nuspec -NoPackageAnalysis -OutputDirectory ..\packages }  
 }
