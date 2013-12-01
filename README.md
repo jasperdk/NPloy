@@ -1,6 +1,6 @@
 NPloy
 =====
-The simple configuration management system for Windows. NPloy is build on a foundation of NuGet and Powershell gluing it together with conventions and a bit of .NET-code.
+The simple release and configuration management system for Windows. NPloy is build on a foundation of NuGet and Powershell gluing it together with conventions and a bit of .NET-code.
 
 I needed something like OctopusDeploy/Puppet-ish with as few dependencies to 3rd party stuff - like Ruby - for a Windows-only environement.
 
