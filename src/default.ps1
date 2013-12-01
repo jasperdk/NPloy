@@ -13,7 +13,7 @@ Task IntegrationTest {
    Exec { packages\NUnit.Runners.2.6.3\tools\nunit-console.exe NPloy.Console.IntegrationTests\bin\debug\NPloy.Console.IntegrationTests.dll /xml=IntegrationTestResult.xml  }      
 }
 
-Task Test -depends Build, UnitTest, IntegrationTest {
+Task Test -depends Build, UnitTest  {
 }
 
 Task Pack -depends Test {
