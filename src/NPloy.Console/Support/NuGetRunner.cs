@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -6,7 +7,7 @@ namespace NPloy.Support
 {
     public interface INuGetRunner
     {
-        IList<string> RunNuGetInstall(string package, string packageSources, string nugetPath, string workingDirectory);
+        IList<string> RunNuGetInstall(string package, string version, string packageSources, string nugetPath, string workingDirectory);
     }
 
     public class NuGetRunner : INuGetRunner
@@ -24,7 +25,7 @@ namespace NPloy.Support
             _commandRunner = commandRunner;
         }
 
-        public IList<string> RunNuGetInstall(string package, string packageSources, string nugetPath, string workingDirectory)
+        public IList<string> RunNuGetInstall(string package, string version, string packageSources, string nugetPath, string workingDirectory)
         {
             var packageSourcesArgument = "";
             if (!string.IsNullOrEmpty(packageSources))
@@ -34,12 +35,18 @@ namespace NPloy.Support
             if (!string.IsNullOrEmpty(workingDirectory))
                 outputDirectoryArgument = @"-OutputDirectory " + workingDirectory + "";
 
+            var versionArgument = "";
+            if (!string.IsNullOrEmpty(version))
+                versionArgument = @"-Version " + version + "";
+
+            var nugetFile = @"nuget";
             if (!string.IsNullOrEmpty(nugetPath))
-                nugetPath += @"\";
+                nugetFile = Path.Combine(nugetPath, nugetFile); 
 
             var installedPackages = new List<string>();
-
-            var strOutput = _commandRunner.RunCommand(nugetPath + @"nuget", string.Format(@"install {0} {1} {2}", package, outputDirectoryArgument, packageSourcesArgument), workingDirectory);
+            var script = string.Format(@"install {0} {1} {2} {3}", package, outputDirectoryArgument, packageSourcesArgument,
+                          versionArgument);
+            var strOutput = _commandRunner.RunCommand(nugetFile, script, workingDirectory);
 
             var matches = Regex.Matches(strOutput, @"Successfully installed '([^']*)'\.", RegexOptions.CultureInvariant);
             foreach (Match m in matches)

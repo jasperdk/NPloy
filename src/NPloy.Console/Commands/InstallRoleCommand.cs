@@ -44,36 +44,33 @@ namespace NPloy.Commands
                 HandleArguments(remainingArguments);
                 SetDefaultOptions();
                 var packages = new List<string>();
-                var roleFile = Path.Combine(ConfigurationDirectory ,"roles", Role);
+                var roleFile = Path.Combine(ConfigurationDirectory, "roles", Role);
 
-                string subFolder = "";
-                if (Role.ToLower().EndsWith(".role") && File.Exists(roleFile))
-                {
-                    Console.WriteLine("Installing role: " + Role);
-                    var doc = new XmlDocument();
-
-                    doc.Load(roleFile);
-                    var rootElement = doc.DocumentElement;
-                    subFolder = rootElement.Attributes["subFolder"] != null ? rootElement.Attributes["subFolder"].Value : "";
-                    var docPackages = doc.GetElementsByTagName("package");
-                    foreach (XmlNode docPackage in docPackages)
-                    {
-                        Console.WriteLine("Package to install: " + docPackage.Attributes["id"].Value);
-                        packages.Add(docPackage.Attributes["id"].Value);
-                    }
-                }
-                else
+                if (!File.Exists(roleFile))
                 {
                     Console.WriteLine("Unknown role: " + Role);
                     return 1;
                 }
 
+                Console.WriteLine("Installing role: " + Role);
+                var doc = new XmlDocument();
+
+                doc.Load(roleFile);
+                var rootElement = doc.DocumentElement;
+                var subFolder = rootElement.Attributes["subFolder"] != null ? rootElement.Attributes["subFolder"].Value : "";
                 if (!string.IsNullOrEmpty(subFolder))
                     WorkingDirectory += @"\" + subFolder;
+                var docPackages = doc.GetElementsByTagName("package");
+                foreach (XmlNode docPackage in docPackages)
+                {
+                    Console.WriteLine("Package to install: " + docPackage.Attributes["id"].Value);
+                    var package = docPackage.Attributes["id"].Value;
+                    var version = docPackage.Attributes["version"] != null ? docPackage.Attributes["version"].Value : null;
+                    packages.Add(package);
+                    InstallPackage(package, version);
+                }
 
-                InstallPackages(packages);
                 StartPackages(packages);
-
                 return 0;
             }
             catch (ConsoleException c)
@@ -108,19 +105,18 @@ namespace NPloy.Commands
             }
         }
 
-        private void InstallPackages(IEnumerable<string> packages)
+        private void InstallPackage( string package,string version)
         {
-            foreach (var package in packages)
-            {
-                var installPackageCommand = new InstallPackageCommand();
-                installPackageCommand.WorkingDirectory = WorkingDirectory;
-                installPackageCommand.PackageSources = PackageSources;
-                installPackageCommand.ConfigurationDirectory = ConfigurationDirectory;
-                installPackageCommand.NuGetPath = NuGetPath;
-                var exitCode = installPackageCommand.Run(new[] { package });
-                if (exitCode > 0)
-                    throw new ConsoleException(exitCode);
-            }
+            var installPackageCommand = new InstallPackageCommand();
+            installPackageCommand.WorkingDirectory = WorkingDirectory;
+            installPackageCommand.PackageSources = PackageSources;
+            installPackageCommand.ConfigurationDirectory = ConfigurationDirectory;
+            installPackageCommand.NuGetPath = NuGetPath;
+            installPackageCommand.Version = version;
+            var exitCode = installPackageCommand.Run(new[] { package });
+            if (exitCode > 0)
+                throw new ConsoleException(exitCode);
+
         }
     }
 }

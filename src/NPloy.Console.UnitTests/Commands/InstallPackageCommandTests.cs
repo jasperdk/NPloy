@@ -28,7 +28,7 @@ namespace NPloy.Console.UnitTests.Commands
         {
             // Arrange
 
-            _nugetRunner.Setup(n => n.RunNuGetInstall("NPloy.Samples.WindowsService", null, null, It.IsAny<string>()))
+            _nugetRunner.Setup(n => n.RunNuGetInstall( "NPloy.Samples.WindowsService",null, null, It.IsAny<string>(), It.IsAny<string>()))
                         .Returns(new List<string> { "NPloy.Samples.WindowsService.1.0.0.0" });
 
             _nPloyConfiguration.Setup(f => f.GetFiles(It.Is<string>(s => s.EndsWith(@"NPloy.Samples.WindowsService.1.0.0.0\App_Install"))))
@@ -48,6 +48,29 @@ namespace NPloy.Console.UnitTests.Commands
                 p =>
                 p.RunPowershellScript(@"App_Install\install.ps1 -propkey 'propvalue'",
                                       It.Is<string>(s => s.EndsWith(@"\NPloy.Samples.WindowsService.1.0.0.0"))), Times.Once());
+
+        }
+
+        [Test]
+        public void Run_WhenVersion_CallNugetWithVersionParameter()
+        {
+            // Arrange
+
+            _nugetRunner.Setup(
+                n =>
+                n.RunNuGetInstall(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+                                  It.IsAny<string>())).Returns(new List<string>());
+            _nPloyConfiguration.Setup(f => f.GetFiles(It.Is<string>(s => s.EndsWith(@"NPloy.Samples.WindowsService.1.0.0.0\App_Install"))))
+                            .Returns(new List<string> { @"d:\NPloy.Samples.WindowsService.1.0.0.0\app_install\install.ps1" });
+
+            // Act
+            _command.Version = "1.1.1.1";
+            _command.Run(new[] { @"NPloy.Samples.WindowsService" });
+
+            // Assert
+            _nugetRunner.Verify(n => n.RunNuGetInstall("NPloy.Samples.WindowsService", "1.1.1.1", null, It.IsAny<string>(), It.IsAny<string>()),Times.Once());
+                        
+
 
         }
     }

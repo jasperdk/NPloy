@@ -37,7 +37,8 @@ namespace NPloy.Commands
             HasOption("d|directory=", "Install in this directory", s => WorkingDirectory = s);
             HasOption("p|packagesources=", "Packagesources", s => PackageSources = s);
             HasOption("c|configuration=", "NPloy configuration directory", s => ConfigurationDirectory = s);
-            HasOption("n|nuget=", "NuGet console path", s => NuGetPath = s ?? ".nuget");
+            HasOption("n|nuget=", "NuGet console path", s => NuGetPath = s);
+            HasOption("v|version=", "Version of package to install ", s => Version = s);
         }
 
         public string Package { get; set; }
@@ -46,6 +47,7 @@ namespace NPloy.Commands
         public string PackageSources { get; set; }
         public string ConfigurationDirectory { get; set; }
         public string NuGetPath { get; set; }
+        public string Version { get; set; }
 
         public override int Run(string[] remainingArguments)
         {
@@ -77,6 +79,8 @@ namespace NPloy.Commands
                 WorkingDirectory = currentDirectory;
             if (string.IsNullOrEmpty(ConfigurationDirectory))
                 ConfigurationDirectory = currentDirectory;
+            //if (string.IsNullOrEmpty(NuGetPath))
+            //    NuGetPath = ".nuget";
         }
 
         private void RunInstallScripts(string installedPackage)
@@ -124,7 +128,7 @@ namespace NPloy.Commands
             if (!string.IsNullOrEmpty(WorkingDirectory) && !Directory.Exists(WorkingDirectory))
                 Directory.CreateDirectory(WorkingDirectory);
 
-            return _nuGetRunner.RunNuGetInstall(package, packageSources, NuGetPath, WorkingDirectory);
+            return _nuGetRunner.RunNuGetInstall(package,Version, packageSources, NuGetPath, WorkingDirectory);
         }
     }
 }

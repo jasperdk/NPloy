@@ -25,13 +25,28 @@ namespace NPloy.Console.IntegrationTests.Support
             var nuGetRunner = new NuGetRunner();
 
             // Act
-            var result = nuGetRunner.RunNuGetInstall("FluentMigrator.Tools", null, null, Directory.GetCurrentDirectory());
+            var result = nuGetRunner.RunNuGetInstall("FluentMigrator.Tools", null, null, null, Directory.GetCurrentDirectory());
 
 
             // Assert
-            Assert.That(result.Count,Is.EqualTo(2));
+            Assert.That(result.Count, Is.EqualTo(2));
             Assert.That(result[0], Is.EqualTo("FluentMigrator.1.1.1.0"));
             Assert.That(result[1], Is.EqualTo("FluentMigrator.Tools.1.1.1.0"));
+        }
+
+        [Test]
+        public void RunNuGetInstall_WhenVersionIsSpecified_ShouldInstallSpecificVersion()
+        {
+            // Arrange
+            var nuGetRunner = new NuGetRunner();
+
+            // Act
+            var result = nuGetRunner.RunNuGetInstall("NUnit", "2.6.1", null, null, Directory.GetCurrentDirectory());
+
+
+            // Assert
+            Assert.That(result.Count, Is.EqualTo(1));
+            Assert.That(result[0], Is.EqualTo("NUnit.2.6.1"));
         }
     }
 }
