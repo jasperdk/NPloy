@@ -29,7 +29,7 @@ namespace NPloy.Commands
             HasOption("p|packagesources=", "NuGet packagesources", s => PackageSources = s);
             HasOption("c|configuration=", "NPloy configuration directory", s => ConfigurationDirectory = s);
             HasOption("n|nuget=", "NuGet console path", s => NuGetPath = s);
-            HasOption("s|start=", "Start packages after install", s => AutoStart = s != null);
+            HasOption("s|start", "Start packages after install", s => AutoStart = s != null);
         }
 
         public string Role { get; set; }
