@@ -1,1 +1,8 @@
-set ENV=prod
+<?xml version="1.0" encoding="utf-8"?>
+<node environment="prod">
+	<roles>
+		<role name="tools-packages.role" />
+		<role name="infrastructure-packages.role" />
+		<role name="web-packages.role" />
+	</roles>
+</node>

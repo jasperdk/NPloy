@@ -3,6 +3,6 @@
 	<roles>
 		<role name="service-packages.role" />
 		<role name="tools-packages.role" />
-		<!--<role name="NPloy.Samples.Web" />-->
+		<!--<role name="web-packages.role" />-->
 	</roles>
 </node>
