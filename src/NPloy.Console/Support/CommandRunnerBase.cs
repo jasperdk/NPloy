@@ -26,10 +26,13 @@ namespace NPloy.Support
 
             pProcess.Start();
             pProcess.WaitForExit();
-            if (pProcess.ExitCode > 0)
-                throw new ConsoleException(pProcess.ExitCode);
+            
             var strOutput = pProcess.StandardOutput.ReadToEnd();
             Console.Write(strOutput);
+
+            if (pProcess.ExitCode > 0)
+                throw new ConsoleException(pProcess.ExitCode);
+
             return strOutput;
 
         }
