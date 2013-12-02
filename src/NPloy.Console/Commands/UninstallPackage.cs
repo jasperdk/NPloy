@@ -13,7 +13,6 @@ namespace NPloy.Commands
         public UninstallPackageCommand()
             : this(new NPloyConfiguration(), new PowerShellRunner())
         {
-
         }
 
         public UninstallPackageCommand(INPloyConfiguration nPloyConfiguration,

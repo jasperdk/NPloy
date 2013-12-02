@@ -89,7 +89,6 @@ namespace NPloy.Commands
 
             Console.WriteLine("Running install scripts in (" + installedPackageScriptPath + ") for package: " + Package);
 
-            string strOutput;
             var files = _nPloyConfiguration.GetFiles(installedPackageScriptPath);
             foreach (var file in files.Where(f => Path.GetFileName(f).ToLower().StartsWith("install")).OrderBy(n => n).ToArray()
                 )
@@ -109,7 +108,7 @@ namespace NPloy.Commands
             Package = remainingArguments[0].Replace(' ', '.');
         }
 
-        private string RunCommand(string installedPackage, string file)
+        private void RunCommand(string installedPackage, string file)
         {
             var environment = Environment ?? "dev";
             var properties = _nPloyConfiguration.GetProperties(Package, environment, ConfigurationDirectory);
@@ -119,9 +118,7 @@ namespace NPloy.Commands
                 argumentsString += " -" + property.Key + @" """ + property.Value + @"""";
             }
 
-            var strOutput = _powershellRunner.RunPowershellScript(file, argumentsString, Path.Combine(WorkingDirectory, installedPackage));
-
-            return strOutput;
+            _powershellRunner.RunPowershellScript(file, argumentsString, Path.Combine(WorkingDirectory, installedPackage));
         }
 
         private IList<string> NugetInstallPackage(string package, string packageSources)
