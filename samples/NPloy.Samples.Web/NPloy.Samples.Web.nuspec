@@ -1,0 +1,23 @@
+﻿<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>NPloy.Samples.Web</id>
+    <title>NPloy Samples Web</title>
+    <version>1.0.0</version>
+    <authors>Jasper Arildslund</authors>
+    <owners>Jasper Arildslund</owners>
+    <licenseUrl>http://arildslund.com</licenseUrl>
+    <projectUrl>http://arildslund.com</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A sample iweb package</description>
+    <releaseNotes>This release contains the following changes...</releaseNotes>    
+  </metadata>
+  <files>
+    <file src="bin\**" target="bin" />
+    <file src="Global.asax" target="" />
+    <file src="web.config" target="" />
+    <file src="content\**" target="content" />
+    <file src="scripts\**" target="scripts" />
+    <file src="App_Install\**" target="App_Install" />
+  </files>
+</package>
