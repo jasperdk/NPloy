@@ -46,7 +46,7 @@ namespace NPloy.Console.UnitTests.Commands
             // Assert
             _powershellRunner.Verify(
                 p =>
-                p.RunPowershellScript(@"App_Install\install.ps1 -propkey 'propvalue'",
+                p.RunPowershellScript(@"App_Install\install.ps1",@" -propkey ""propvalue""",
                                       It.Is<string>(s => s.EndsWith(@"\NPloy.Samples.WindowsService.1.0.0.0"))), Times.Once());
 
         }

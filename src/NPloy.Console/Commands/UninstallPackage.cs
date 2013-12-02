@@ -45,7 +45,7 @@ namespace NPloy.Commands
 
                 Console.WriteLine("Running uninstall scripts for package: " + Package);
 
-                _powershellRunner.RunPowershellScript(@".\App_Install\Uninstall.ps1", applicationPath);
+                _powershellRunner.RunPowershellScript(@".\App_Install\Uninstall.ps1", null, applicationPath);
                 return 0;
             }
             catch (ConsoleException c)

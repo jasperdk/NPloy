@@ -2,14 +2,15 @@ namespace NPloy.Support
 {
     public interface IPowershellRunner
     {
-        string RunPowershellScript(string script, string workingDirectory);
+        string RunPowershellScript(string file, string arguments, string workingDirectory);
     }
 
-    public class PowerShellRunner :  IPowershellRunner
+    public class PowerShellRunner : IPowershellRunner
     {
         private readonly ICommandRunner _commandRunner;
 
-        public PowerShellRunner():this(new CommandRunner())
+        public PowerShellRunner()
+            : this(new CommandRunner())
         {
         }
 
@@ -18,9 +19,10 @@ namespace NPloy.Support
             _commandRunner = commandRunner;
         }
 
-        public string RunPowershellScript(string script, string workingDirectory)
+        public string RunPowershellScript(string file, string arguments, string workingDirectory)
         {
-            return _commandRunner.RunCommand(@"powershell", "-executionpolicy unrestricted -Noninteractive" + script, workingDirectory);
+            var powershellArguments = "-executionpolicy unrestricted -Noninteractive -file " + file + " " + arguments;
+            return _commandRunner.RunCommand(@"powershell", powershellArguments, workingDirectory);
         }
     }
 }

@@ -45,7 +45,7 @@ namespace NPloy.Commands
 
                 Console.WriteLine("Running stop scripts for package: " + InstalledPackage);
 
-                _powershellRunner.RunPowershellScript(@".\App_Install\Stop.ps1", applicationPath);
+                _powershellRunner.RunPowershellScript(@".\App_Install\Stop.ps1", null, applicationPath);
                 return 0;
             }
             catch (ConsoleException c)

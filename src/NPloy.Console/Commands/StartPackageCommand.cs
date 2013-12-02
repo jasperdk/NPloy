@@ -45,7 +45,7 @@ namespace NPloy.Commands
 
                 Console.WriteLine("Running start scripts for package: " + InstalledPackage);
 
-                _powershellRunner.RunPowershellScript(@".\App_Install\Start.ps1", applicationPath);
+                _powershellRunner.RunPowershellScript(@".\App_Install\Start.ps1", null, applicationPath);
                 return 0;
             }
             catch (ConsoleException c)

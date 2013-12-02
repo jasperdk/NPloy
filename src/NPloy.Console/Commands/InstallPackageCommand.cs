@@ -109,16 +109,17 @@ namespace NPloy.Commands
             Package = remainingArguments[0].Replace(' ', '.');
         }
 
-        private string RunCommand(string installedPackage, string script)
+        private string RunCommand(string installedPackage, string file)
         {
             var environment = Environment ?? "dev";
             var properties = _nPloyConfiguration.GetProperties(Package, environment, ConfigurationDirectory);
+            var argumentsString = "";
             foreach (var property in properties)
             {
-                script += " -" + property.Key + @" '" + property.Value + @"'";
+                argumentsString += " -" + property.Key + @" """ + property.Value + @"""";
             }
 
-            var strOutput = _powershellRunner.RunPowershellScript(script, Path.Combine(WorkingDirectory, installedPackage));
+            var strOutput = _powershellRunner.RunPowershellScript(file, argumentsString, Path.Combine(WorkingDirectory, installedPackage));
 
             return strOutput;
         }
