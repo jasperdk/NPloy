@@ -22,12 +22,14 @@ namespace NPloy.Commands
             HasOption("d|directory=", "Install to this directory", s => WorkingDirectory = s);
             HasOption("p|packagesources=", "NuGet packagesources", s => PackageSources = s);
             HasOption("n|nuget=", "NuGet console path", s => NuGetPath = s);
+            HasOption("s|start=", "Start packages after install", s => AutoStart = s != null);
         }
 
         public string Node;
         public string WorkingDirectory;
         public string NuGetPath { get; set; }
         public string PackageSources { get; set; }
+        public bool AutoStart { get; set; }
 
         private readonly IInstallRoleCommand _installRoleCommand;
 
@@ -63,6 +65,7 @@ namespace NPloy.Commands
                     _installRoleCommand.PackageSources = PackageSources;
                     _installRoleCommand.ConfigurationDirectory = nployConfigurationPath;
                     _installRoleCommand.NuGetPath = NuGetPath;
+                    _installRoleCommand.AutoStart = AutoStart;
                     var result = _installRoleCommand.Run(new[] { role });
                     if (result > 0)
                         return result;

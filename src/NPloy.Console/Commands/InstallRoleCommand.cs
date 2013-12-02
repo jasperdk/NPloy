@@ -15,6 +15,7 @@ namespace NPloy.Commands
         string PackageSources { get; set; }
         string ConfigurationDirectory { get; set; }
         string NuGetPath { get; set; }
+        bool AutoStart { get; set; }
     }
 
     public class InstallRoleCommand : ConsoleCommand, IInstallRoleCommand
@@ -28,6 +29,7 @@ namespace NPloy.Commands
             HasOption("p|packagesources=", "NuGet packagesources", s => PackageSources = s);
             HasOption("c|configuration=", "NPloy configuration directory", s => ConfigurationDirectory = s);
             HasOption("n|nuget=", "NuGet console path", s => NuGetPath = s);
+            HasOption("s|start=", "Start packages after install", s => AutoStart = s != null);
         }
 
         public string Role { get; set; }
@@ -36,6 +38,7 @@ namespace NPloy.Commands
         public string WorkingDirectory { get; set; }
         public string ConfigurationDirectory { get; set; }
         public string NuGetPath { get; set; }
+        public bool AutoStart { get; set; }
 
         public override int Run(string[] remainingArguments)
         {
@@ -70,7 +73,8 @@ namespace NPloy.Commands
                     InstallPackage(package, version);
                 }
 
-                StartPackages(packages);
+                if (AutoStart)
+                    StartPackages(packages);
                 return 0;
             }
             catch (ConsoleException c)
@@ -105,7 +109,7 @@ namespace NPloy.Commands
             }
         }
 
-        private void InstallPackage( string package,string version)
+        private void InstallPackage(string package, string version)
         {
             var installPackageCommand = new InstallPackageCommand();
             installPackageCommand.WorkingDirectory = WorkingDirectory;
