@@ -1,0 +1,23 @@
+﻿<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>NPloy.Samples.SmokeTests</id>
+    <title>NPloy Samples SmokeTests</title>
+    <version>1.0.0</version>
+    <authors>Jasper Arildslund</authors>
+    <owners>Jasper Arildslund</owners>
+    <licenseUrl>http://arildslund.com</licenseUrl>
+    <projectUrl>http://arildslund.com</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A sample smoke test</description>
+    <releaseNotes>This release contains the following changes...</releaseNotes>
+    <dependencies>
+      <group>
+        <dependency id="NUnit.Runners" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="bin\Debug\**" target="" />
+  </files>
+</package>

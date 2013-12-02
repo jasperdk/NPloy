@@ -60,16 +60,13 @@ namespace NPloy.Commands
                 string environment = GetEnvironmentFromFile();
                 foreach (var role in roles)
                 {
-                    _installRoleCommand.WorkingDirectory = WorkingDirectory;
-                    _installRoleCommand.Environment = environment;
-                    _installRoleCommand.PackageSources = PackageSources;
-                    _installRoleCommand.ConfigurationDirectory = nployConfigurationPath;
-                    _installRoleCommand.NuGetPath = NuGetPath;
-                    _installRoleCommand.AutoStart = AutoStart;
-                    var result = _installRoleCommand.Run(new[] { role });
+                    var result = InstallRole(role, environment, nployConfigurationPath);
                     if (result > 0)
                         return result;
                 }
+
+                if (AutoStart)
+                    StartNode();
 
                 return 0;
             }
@@ -77,6 +74,25 @@ namespace NPloy.Commands
             {
                 return c.ExitCode;
             }
+        }
+
+        private void StartNode()
+        {
+            var startNodeCommand = new StartNodeCommand();
+            startNodeCommand.WorkingDirectory = WorkingDirectory;
+            startNodeCommand.Run(new[] { Node });
+        }
+
+        private int InstallRole(string role, string environment, string nployConfigurationPath)
+        {
+            _installRoleCommand.WorkingDirectory = WorkingDirectory;
+            _installRoleCommand.Environment = environment;
+            _installRoleCommand.PackageSources = PackageSources;
+            _installRoleCommand.ConfigurationDirectory = nployConfigurationPath;
+            _installRoleCommand.NuGetPath = NuGetPath;
+            //_installRoleCommand.AutoStart = AutoStart;
+            var result = _installRoleCommand.Run(new[] { role });
+            return result;
         }
 
         private void SetDefaultOptionValues()

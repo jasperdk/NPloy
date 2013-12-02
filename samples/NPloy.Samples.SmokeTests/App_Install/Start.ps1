@@ -2,7 +2,7 @@
 $ErrorActionPreference = "Stop"
 try
 {
-	& .\NPloy.Samples.WindowsService.exe stop
+	& ..\NUnit.Runners.2.6.3\tools\nunit-console.exe NPloy.Samples.SmokeTests.dll /xml=SmokeTestResult.xml
 }
 catch
 {
@@ -11,4 +11,3 @@ catch
 
     Exit 1
 }
-
