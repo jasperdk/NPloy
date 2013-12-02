@@ -11,6 +11,7 @@ namespace NPloy.Support
     {
         public string RunCommand(string fileName, string arguments, string workingDirectory)
         {
+            Console.WriteLine("Executing command: " + fileName);
             var pProcess = new System.Diagnostics.Process
                 {
                     StartInfo =

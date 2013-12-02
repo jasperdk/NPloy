@@ -20,7 +20,7 @@ namespace NPloy.Support
 
         public string RunPowershellScript(string script, string workingDirectory)
         {
-            return _commandRunner.RunCommand(@"powershell", "-executionpolicy unrestricted " + script, workingDirectory);
+            return _commandRunner.RunCommand(@"powershell", "-executionpolicy unrestricted -Noninteractive" + script, workingDirectory);
         }
     }
 }
