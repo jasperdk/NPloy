@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using ManyConsole;
+﻿using ManyConsole;
 
 namespace NPloy
 {
@@ -8,7 +7,8 @@ namespace NPloy
         private static int Main(string[] args)
         {
             // locate any commands in the assembly (or use an IoC container, or whatever source)
-            var commands = GetCommands();
+            var commandFactory = new CommandFactory();
+            var commands = commandFactory.GetCommands();
 
 
             // then run them.
@@ -22,12 +22,6 @@ namespace NPloy
                 return e.ExitCode;
             }
             
-        }
-
-
-        public static IEnumerable<ConsoleCommand> GetCommands()
-        {
-            return ConsoleCommandDispatcher.FindCommandsInSameAssemblyAs(typeof (Program));
         }
     }
 }

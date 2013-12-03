@@ -8,37 +8,36 @@ namespace NPloy.Commands
 {
     public class InstallNodeCommand : ConsoleCommand
     {
+        private readonly ICommandFactory _commandFactory;
         public const string PackageFileName = "packages.config";
         public InstallNodeCommand()
-            : this(new InstallRoleCommand())
+            : this(new CommandFactory())
         {
         }
 
-        public InstallNodeCommand(IInstallRoleCommand installRoleCommand)
+        public InstallNodeCommand(ICommandFactory commandFactory)
         {
-            _installRoleCommand = installRoleCommand;
+            _commandFactory = commandFactory;
             IsCommand("InstallNode", "InstallNode");
             HasAdditionalArguments(1, "Node");
-            HasOption("d|directory=", "Install to this directory", s => WorkingDirectory = s);
+            HasOption("d|directory=", "Install to this directory", s => InstallDirectory = s);
             HasOption("p|packagesources=", "NuGet packagesources", s => PackageSources = s);
             HasOption("n|nuget=", "NuGet console path", s => NuGetPath = s);
             HasOption("s|start", "Start packages after install", s => AutoStart = s != null);
         }
 
         public string Node;
-        public string WorkingDirectory;
+        public string InstallDirectory;
         public string NuGetPath { get; set; }
         public string PackageSources { get; set; }
         public bool AutoStart { get; set; }
-
-        private readonly IInstallRoleCommand _installRoleCommand;
 
         public override int Run(string[] remainingArguments)
         {
             try
             {
                 SetDefaultOptionValues();
-                var packageFileName = !string.IsNullOrEmpty(WorkingDirectory) ? Path.Combine(WorkingDirectory, PackageFileName) : PackageFileName;
+                var packageFileName = Path.Combine(InstallDirectory, PackageFileName);
 
                 if (File.Exists(packageFileName))
                 {
@@ -78,28 +77,28 @@ namespace NPloy.Commands
 
         private void StartNode()
         {
-            var startNodeCommand = new StartNodeCommand();
-            startNodeCommand.WorkingDirectory = WorkingDirectory;
+            var startNodeCommand = _commandFactory.GetCommand<StartNodeCommand>();
+            startNodeCommand.WorkingDirectory = InstallDirectory;
             startNodeCommand.Run(new[] { Node });
         }
 
         private int InstallRole(string role, string environment, string nployConfigurationPath)
         {
-            _installRoleCommand.WorkingDirectory = WorkingDirectory;
-            _installRoleCommand.Environment = environment;
-            _installRoleCommand.PackageSources = PackageSources;
-            _installRoleCommand.ConfigurationDirectory = nployConfigurationPath;
-            _installRoleCommand.NuGetPath = NuGetPath;
-            //_installRoleCommand.AutoStart = AutoStart;
-            var result = _installRoleCommand.Run(new[] { role });
+            var installRoleCommand = _commandFactory.GetCommand<InstallRoleCommand>();
+            installRoleCommand.InstallDirectory = InstallDirectory;
+            installRoleCommand.Environment = environment;
+            installRoleCommand.PackageSources = PackageSources;
+            installRoleCommand.ConfigurationDirectory = nployConfigurationPath;
+            installRoleCommand.NuGetPath = NuGetPath;
+            var result = installRoleCommand.Run(new[] { role });
             return result;
         }
 
         private void SetDefaultOptionValues()
         {
             var currentDirectory = Directory.GetCurrentDirectory();
-            if (string.IsNullOrEmpty(WorkingDirectory))
-                WorkingDirectory = currentDirectory;
+            if (string.IsNullOrEmpty(InstallDirectory))
+                InstallDirectory = currentDirectory;
         }
 
         private string GetEnvironmentFromFile()
@@ -116,7 +115,6 @@ namespace NPloy.Commands
 
         private void HandleArguments(string[] remainingArguments)
         {
-            _installRoleCommand.WorkingDirectory = WorkingDirectory;
             Node = remainingArguments[0];
             if (!Node.ToLower().EndsWith(".node"))
                 Node += ".node";

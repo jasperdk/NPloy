@@ -9,7 +9,7 @@ namespace NPloy.Commands
     public interface IInstallRoleCommand
     {
         int Run(string[] remainingArguments);
-        string WorkingDirectory { get; set; }
+        string InstallDirectory { get; set; }
         string Role { get; set; }
         string Environment { get; set; }
         string PackageSources { get; set; }
@@ -24,7 +24,7 @@ namespace NPloy.Commands
         {
             IsCommand("InstallRole", "InstallRole");
             HasAdditionalArguments(1, "Role");
-            HasOption("d|directory=", "Deploy to this directory", s => WorkingDirectory = s);
+            HasOption("d|directory=", "Deploy to this directory", s => InstallDirectory = s);
             HasOption("e|environment=", "Deploy to this environment", s => Environment = s);
             HasOption("p|packagesources=", "NuGet packagesources", s => PackageSources = s);
             HasOption("c|configuration=", "NPloy configuration directory", s => ConfigurationDirectory = s);
@@ -33,12 +33,12 @@ namespace NPloy.Commands
         }
 
         public string Role { get; set; }
-        public string PackageSources { get; set; }
-        public string Environment { get; set; }
-        public string WorkingDirectory { get; set; }
-        public string ConfigurationDirectory { get; set; }
-        public string NuGetPath { get; set; }
-        public bool AutoStart { get; set; }
+        public virtual string PackageSources { get; set; }
+        public virtual string Environment { get; set; }
+        public virtual string InstallDirectory { get; set; }
+        public virtual string ConfigurationDirectory { get; set; }
+        public virtual string NuGetPath { get; set; }
+        public virtual bool AutoStart { get; set; }
 
         public override int Run(string[] remainingArguments)
         {
@@ -62,7 +62,7 @@ namespace NPloy.Commands
                 var rootElement = doc.DocumentElement;
                 var subFolder = rootElement.Attributes["subFolder"] != null ? rootElement.Attributes["subFolder"].Value : "";
                 if (!string.IsNullOrEmpty(subFolder))
-                    WorkingDirectory += @"\" + subFolder;
+                    InstallDirectory += @"\" + subFolder;
                 var docPackages = doc.GetElementsByTagName("package");
                 foreach (XmlNode docPackage in docPackages)
                 {
@@ -91,8 +91,8 @@ namespace NPloy.Commands
         private void SetDefaultOptions()
         {
             var currentDirectory = Directory.GetCurrentDirectory();
-            if (string.IsNullOrEmpty(WorkingDirectory))
-                WorkingDirectory = currentDirectory;
+            if (string.IsNullOrEmpty(InstallDirectory))
+                InstallDirectory = currentDirectory;
             if (string.IsNullOrEmpty(ConfigurationDirectory))
                 ConfigurationDirectory = currentDirectory;
         }
@@ -102,7 +102,7 @@ namespace NPloy.Commands
             var startPackageCommand = new StartPackageCommand();
             foreach (var installedPackage in installedPackages)
             {
-                startPackageCommand.WorkingDirectory = WorkingDirectory;
+                startPackageCommand.WorkingDirectory = InstallDirectory;
                 var exitCode = startPackageCommand.Run(new[] { installedPackage });
                 if (exitCode > 0)
                     throw new ConsoleException(exitCode);
@@ -112,7 +112,7 @@ namespace NPloy.Commands
         private void InstallPackage(string package, string version)
         {
             var installPackageCommand = new InstallPackageCommand();
-            installPackageCommand.WorkingDirectory = WorkingDirectory;
+            installPackageCommand.WorkingDirectory = InstallDirectory;
             installPackageCommand.PackageSources = PackageSources;
             installPackageCommand.ConfigurationDirectory = ConfigurationDirectory;
             installPackageCommand.NuGetPath = NuGetPath;
