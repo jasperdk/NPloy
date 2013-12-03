@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Xml;
 
 namespace NPloy.Support
 {
@@ -12,6 +13,34 @@ namespace NPloy.Support
         bool HasInstalledPackages(string workingDirectory);
         IEnumerable<string> GetInstalledPackges(string workingDirectory);
         void PackagesHasBeenUninstalled(string workingDirectory);
+        RoleConfig GetRoleConfig(string roleFile);
+    }
+
+    public class PackageConfig
+    {
+        public string Id
+        {
+            get;
+            set;
+        }
+
+        public string Version { get; set; }
+    }
+
+    public class RoleConfig
+    {
+        public RoleConfig()
+        {
+            Packages=new List<PackageConfig>();
+        }
+
+        public string SubFolder
+        {
+            get;
+            set;
+        }
+
+        public IList<PackageConfig> Packages { get; set; }
     }
 
     public class NPloyConfiguration : INPloyConfiguration
@@ -68,6 +97,28 @@ namespace NPloy.Support
         public void PackagesHasBeenUninstalled(string workingDirectory)
         {
             File.Delete(workingDirectory + @"\packages.config");
+        }
+
+        public RoleConfig GetRoleConfig(string roleFile)
+        {
+            var roleConfig = new RoleConfig();
+
+            var doc = new XmlDocument();
+            doc.Load(roleFile);
+            var rootElement = doc.DocumentElement;
+            roleConfig.SubFolder = rootElement.Attributes["subFolder"] != null ? rootElement.Attributes["subFolder"].Value : "";
+
+            var docPackages = doc.GetElementsByTagName("package");
+            foreach (XmlNode docPackage in docPackages)
+            {
+                roleConfig.Packages.Add(new PackageConfig
+                {
+                    Id = docPackage.Attributes["id"].Value,
+                    Version =
+                        docPackage.Attributes["version"] != null ? docPackage.Attributes["version"].Value : null
+                });
+            }
+            return roleConfig;
         }
     }
 }

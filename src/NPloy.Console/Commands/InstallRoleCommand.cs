@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using ManyConsole;
+using NPloy.Support;
 
 namespace NPloy.Commands
 {
@@ -20,8 +21,19 @@ namespace NPloy.Commands
 
     public class InstallRoleCommand : ConsoleCommand, IInstallRoleCommand
     {
+        private readonly INPloyConfiguration _nPloyConfiguration;
+        private readonly ICommandFactory _commandFactory;
+
         public InstallRoleCommand()
+            : this(new NPloyConfiguration(), new CommandFactory())
         {
+
+        }
+
+        public InstallRoleCommand(INPloyConfiguration nPloyConfiguration, ICommandFactory commandFactory)
+        {
+            _nPloyConfiguration = nPloyConfiguration;
+            _commandFactory = commandFactory;
             IsCommand("InstallRole", "InstallRole");
             HasAdditionalArguments(1, "Role");
             HasOption("d|directory=", "Deploy to this directory", s => InstallDirectory = s);
@@ -49,26 +61,25 @@ namespace NPloy.Commands
                 var packages = new List<string>();
                 var roleFile = Path.Combine(ConfigurationDirectory, "roles", Role);
 
-                if (!File.Exists(roleFile))
+                if (!_nPloyConfiguration.FileExists(roleFile))
                 {
                     Console.WriteLine("Unknown role: " + Role);
                     return 1;
                 }
 
                 Console.WriteLine("Installing role: " + Role);
-                var doc = new XmlDocument();
 
-                doc.Load(roleFile);
-                var rootElement = doc.DocumentElement;
-                var subFolder = rootElement.Attributes["subFolder"] != null ? rootElement.Attributes["subFolder"].Value : "";
-                if (!string.IsNullOrEmpty(subFolder))
-                    InstallDirectory += @"\" + subFolder;
-                var docPackages = doc.GetElementsByTagName("package");
-                foreach (XmlNode docPackage in docPackages)
+                var roleConfig = _nPloyConfiguration.GetRoleConfig(roleFile);
+
+
+                if (!string.IsNullOrEmpty(roleConfig.SubFolder))
+                    InstallDirectory += @"\" + roleConfig.SubFolder;
+
+                foreach (var packageConfig in roleConfig.Packages)
                 {
-                    Console.WriteLine("Package to install: " + docPackage.Attributes["id"].Value);
-                    var package = docPackage.Attributes["id"].Value;
-                    var version = docPackage.Attributes["version"] != null ? docPackage.Attributes["version"].Value : null;
+                    Console.WriteLine("Package to install: " + packageConfig.Id);
+                    var package = packageConfig.Id;
+                    var version = packageConfig.Version;
                     packages.Add(package);
                     InstallPackage(package, version);
                 }
@@ -111,7 +122,7 @@ namespace NPloy.Commands
 
         private void InstallPackage(string package, string version)
         {
-            var installPackageCommand = new InstallPackageCommand();
+            var installPackageCommand = _commandFactory.GetCommand<InstallPackageCommand>();
             installPackageCommand.WorkingDirectory = InstallDirectory;
             installPackageCommand.PackageSources = PackageSources;
             installPackageCommand.ConfigurationDirectory = ConfigurationDirectory;
@@ -123,4 +134,6 @@ namespace NPloy.Commands
 
         }
     }
+
+   
 }

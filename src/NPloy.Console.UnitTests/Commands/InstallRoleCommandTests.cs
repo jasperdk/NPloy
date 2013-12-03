@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using Moq;
 using NPloy.Commands;
+using NPloy.Support;
 using NUnit.Framework;
 
 namespace NPloy.Console.UnitTests.Commands
@@ -8,33 +9,46 @@ namespace NPloy.Console.UnitTests.Commands
     [TestFixture]
     public class InstallRoleCommandTests
     {
+        private Mock<ICommandFactory> _commandFactory;
         private InstallRoleCommand _command;
-        private Mock<IInstallPackageCommand> _installPackageCommandMock;
-        private const string RoleCommandFile="test.role";
+        private Mock<InstallPackageCommand> _installPackageCommandMock;
+        private Mock<INPloyConfiguration> _nployConfigurationMock;
+        private string _currentDirectory;
+        private const string RoleCommandFile = "test.role";
 
         [SetUp]
         public void SetUp()
         {
-            _installPackageCommandMock = new Mock<IInstallPackageCommand>();
-            _command = new InstallRoleCommand();
+            _installPackageCommandMock = new Mock<InstallPackageCommand>();
+            _nployConfigurationMock = new Mock<INPloyConfiguration>();
 
-            if (File.Exists(RoleCommandFile))
-                File.Delete(RoleCommandFile);
+            _currentDirectory = Directory.GetCurrentDirectory();
+
+            _commandFactory = new Mock<ICommandFactory>();
+
+            _command = new InstallRoleCommand(_nployConfigurationMock.Object,_commandFactory.Object);
         }
 
-        [Test, Ignore("Not implemented")]
+        [Test]
         public void ShouldMethod()
         {
             // Arrange
+            var roleFile = Path.Combine(_currentDirectory, @"roles\" + RoleCommandFile);
+            _nployConfigurationMock.Setup(x => x.FileExists(roleFile)).Returns(true);
+            var roleConfig = new RoleConfig();
+            roleConfig.Packages.Add(new PackageConfig{Id="Test.Package"});
+            _nployConfigurationMock.Setup(x => x.GetRoleConfig(roleFile)).Returns(roleConfig);
+
+            _commandFactory.Setup(x => x.GetCommand<InstallPackageCommand>()).Returns(_installPackageCommandMock.Object);
 
             // Act
-            _command.Role = RoleCommandFile;
-            _command.Run(new string[0]);
+            var result = _command.Run(new[] { RoleCommandFile });
 
             // Assert
-            _installPackageCommandMock.VerifySet(c => c.Package="test.role",Times.Once());
+            Assert.That(result, Is.EqualTo(0));
+            _installPackageCommandMock.Verify(c => c.Run(new[] { "Test.Package" }), Times.Once());
         }
     }
 
-    
+
 }
