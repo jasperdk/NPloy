@@ -21,12 +21,12 @@ namespace NPloy.Commands
             _nPloyConfiguration = nPloyConfiguration;
             IsCommand("UninstallNode", "UninstallNode");
             //HasAdditionalArguments(1, "Node");
-            HasOption("d|directory=", "Uninstall from this directory", s => WorkingDirectory = s);
+            HasOption("d|directory=", "Uninstall from this directory", s => InstallDirectory = s);
             HasOption("r|remove", "Delete files and directories after uninstall", s => RemoveFilesAndDirectories = s != null);
         }
 
         //public string Node;
-        public string WorkingDirectory;
+        public string InstallDirectory;
         public bool RemoveFilesAndDirectories;
 
         public override int Run(string[] remainingArguments)
@@ -35,15 +35,15 @@ namespace NPloy.Commands
             {
                 SetDefaultOptionValues();
 
-                if (!_nPloyConfiguration.HasInstalledPackages(WorkingDirectory))
+                if (!_nPloyConfiguration.HasInstalledPackages(InstallDirectory))
                 {
                     Console.WriteLine("Nothing to uninstall");
                     return 0;
                 }
 
-                Console.WriteLine("Uninstall node in: " + WorkingDirectory);
-                
-                var installedPackages = _nPloyConfiguration.GetInstalledPackges(WorkingDirectory);
+                Console.WriteLine("Uninstall node in: " + InstallDirectory);
+
+                var installedPackages = _nPloyConfiguration.GetInstalledPackges(InstallDirectory);
                 StopNode();
                 UninstallPackages(installedPackages);
                 if (RemoveFilesAndDirectories)
@@ -51,7 +51,7 @@ namespace NPloy.Commands
                     DeleteDirectories(installedPackages);
                 }
 
-                _nPloyConfiguration.PackagesHasBeenUninstalled(WorkingDirectory);
+                _nPloyConfiguration.PackagesHasBeenUninstalled(InstallDirectory);
 
                 return 0;
             }
@@ -61,11 +61,16 @@ namespace NPloy.Commands
             }
         }
 
-        private static void DeleteDirectories(IEnumerable<string> installedPackages)
+        private void DeleteDirectories(IEnumerable<string> installedPackages)
         {
             foreach (var installedPackage in installedPackages)
             {
-                Directory.Delete(installedPackage, true);
+                if(string.IsNullOrEmpty(installedPackage))
+                    continue;
+                
+                var pathToDelete = Path.Combine(InstallDirectory, installedPackage);
+                if (Directory.Exists(pathToDelete))
+                    Directory.Delete(pathToDelete, true);
             }
         }
 
@@ -75,9 +80,9 @@ namespace NPloy.Commands
             {
                 var uninstallPackageCommand = new UninstallPackageCommand
                     {
-                        WorkingDirectory = WorkingDirectory
+                        WorkingDirectory = InstallDirectory
                     };
-                uninstallPackageCommand.Run(new[] {package});
+                uninstallPackageCommand.Run(new[] { package });
             }
         }
 
@@ -85,7 +90,7 @@ namespace NPloy.Commands
         {
             var stopNodeCommand = new StopNodeCommand
                 {
-                    WorkingDirectory = WorkingDirectory
+                    WorkingDirectory = InstallDirectory
                 };
             stopNodeCommand.Run(new string[0]);
         }
@@ -93,8 +98,8 @@ namespace NPloy.Commands
         private void SetDefaultOptionValues()
         {
             var currentDirectory = Directory.GetCurrentDirectory();
-            if (string.IsNullOrEmpty(WorkingDirectory))
-                WorkingDirectory = currentDirectory;
+            if (string.IsNullOrEmpty(InstallDirectory))
+                InstallDirectory = currentDirectory;
         }
     }
 }
