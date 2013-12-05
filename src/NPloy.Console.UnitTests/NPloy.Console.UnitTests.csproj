@@ -64,7 +64,10 @@
     <Compile Include="Support\NPloyConfigurationTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include=".nploy\environments\default.prop">
+    <None Include=".nploy\environments\default\env.prop">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include=".nploy\environments\default\package.prop">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include=".nploy\environments\test\package.prop">

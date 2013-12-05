@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Xml;
 
 namespace NPloy.Support
@@ -31,7 +33,7 @@ namespace NPloy.Support
     {
         public RoleConfig()
         {
-            Packages=new List<PackageConfig>();
+            Packages = new List<PackageConfig>();
         }
 
         public string SubFolder
@@ -45,6 +47,7 @@ namespace NPloy.Support
 
     public class NPloyConfiguration : INPloyConfiguration
     {
+        private const string Pattern = @"\$\(([^\)]*)\)";
         public IList<string> GetFiles(string path)
         {
             if (!Directory.Exists(path))
@@ -58,10 +61,45 @@ namespace NPloy.Support
                 configurationDirectory += @"\";
             Console.WriteLine("Loading properties for environment: " + environment);
             var result = new Dictionary<string, string>();
-            GetPropertiesFromFile(configurationDirectory + @"environments\default.prop", result);
-            GetPropertiesFromFile(configurationDirectory + @"environments\" + environment + @"\env.prop", result);
-            GetPropertiesFromFile(configurationDirectory + @"environments\" + environment + @"\" + package + ".prop", result);
+            GetPropertiesFromFile(configurationDirectory + @"environments\default\env.prop", result);
+            GetPropertiesFromFile(configurationDirectory + @"environments\default\" + package + ".prop", result);
+            if (environment.ToLower() != "default")
+            {
+                GetPropertiesFromFile(configurationDirectory + @"environments\" + environment + @"\env.prop", result);
+                GetPropertiesFromFile(
+                    configurationDirectory + @"environments\" + environment + @"\" + package + ".prop", result);
+            }
+
+            SubstituteValues(result);
+
             return result;
+        }
+
+        private static void SubstituteValues(Dictionary<string, string> result)
+        {
+            var substitutionCandidates = result.Where(x => Regex.IsMatch(x.Value, Pattern)).ToArray();
+            for (var i = 0; i < substitutionCandidates.Length; i++)
+            {
+                var keyValue = substitutionCandidates[i];
+                Substitute(result, keyValue);
+            }
+        }
+
+        private static void Substitute(Dictionary<string, string> result, KeyValuePair<string, string> keyValue)
+        {
+            var match = Regex.Match(keyValue.Value, Pattern);
+            if (match.Success)
+            {
+                var substitutionValue = "";
+                var substitutionKey = match.Groups[1].Value;
+                if (result.ContainsKey(substitutionKey) && substitutionKey != keyValue.Key)
+                    substitutionValue = result[substitutionKey];
+                result[keyValue.Key] = Regex.Replace(keyValue.Value, Pattern, substitutionValue);
+
+                if (Regex.IsMatch(result[keyValue.Key], Pattern))
+                    Substitute(result, result.Single(x => x.Key == keyValue.Key));
+            }
+           
         }
 
         private static void GetPropertiesFromFile(string file, Dictionary<string, string> result)
