@@ -30,7 +30,7 @@ namespace NPloy.Console.UnitTests.Commands
         }
 
         [Test]
-        public void ShouldMethod()
+        public void Run_ShouldInstallPackage()
         {
             // Arrange
             var roleFile = Path.Combine(_currentDirectory, @"roles\" + RoleCommandFile);
@@ -47,6 +47,35 @@ namespace NPloy.Console.UnitTests.Commands
             // Assert
             Assert.That(result, Is.EqualTo(0));
             _installPackageCommandMock.Verify(c => c.Run(new[] { "Test.Package" }), Times.Once());
+        }
+
+        [Test]
+        public void Run_ShouldSetParametersOnInstallPackageCommand()
+        {
+            // Arrange
+            var roleFile = Path.Combine( @"config\roles" , RoleCommandFile);
+            _nployConfigurationMock.Setup(x => x.FileExists(roleFile)).Returns(true);
+            var roleConfig = new RoleConfig();
+            roleConfig.Packages.Add(new PackageConfig { Id = "Test.Package" });
+            _nployConfigurationMock.Setup(x => x.GetRoleConfig(roleFile)).Returns(roleConfig);
+
+            _commandFactory.Setup(x => x.GetCommand<InstallPackageCommand>()).Returns(_installPackageCommandMock.Object);
+
+            // Act
+            _command.PackageSources = "source"; 
+            _command.Environment= "test";
+            _command.NuGetPath = "nugetpath";
+            _command.ConfigurationDirectory = "config";
+            _command.InstallDirectory = "install";
+            var result = _command.Run(new[] { RoleCommandFile });
+
+            // Assert
+            Assert.That(result, Is.EqualTo(0));
+            _installPackageCommandMock.VerifySet(c => c.PackageSources="source", Times.Once());
+            _installPackageCommandMock.VerifySet(c => c.Environment = "test", Times.Once());
+            _installPackageCommandMock.VerifySet(c => c.WorkingDirectory = "install", Times.Once());
+            _installPackageCommandMock.VerifySet(c => c.NuGetPath = "nugetpath", Times.Once());
+            _installPackageCommandMock.VerifySet(c => c.ConfigurationDirectory = "config", Times.Once());
         }
     }
 

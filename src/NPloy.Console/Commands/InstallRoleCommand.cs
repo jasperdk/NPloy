@@ -127,6 +127,7 @@ namespace NPloy.Commands
             installPackageCommand.ConfigurationDirectory = ConfigurationDirectory;
             installPackageCommand.NuGetPath = NuGetPath;
             installPackageCommand.Version = version;
+            installPackageCommand.Environment = Environment;
             var exitCode = installPackageCommand.Run(new[] { package });
             if (exitCode > 0)
                 throw new ConsoleException(exitCode);

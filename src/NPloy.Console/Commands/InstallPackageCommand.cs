@@ -42,12 +42,12 @@ namespace NPloy.Commands
         }
 
         public string Package { get; set; }
-        public string Environment;
-        public string WorkingDirectory { get; set; }
-        public string PackageSources { get; set; }
-        public string ConfigurationDirectory { get; set; }
-        public string NuGetPath { get; set; }
-        public string Version { get; set; }
+        public virtual string Environment { get; set; }
+        public virtual string WorkingDirectory { get; set; }
+        public virtual string PackageSources { get; set; }
+        public virtual string ConfigurationDirectory { get; set; }
+        public virtual string NuGetPath { get; set; }
+        public virtual string Version { get; set; }
 
         public override int Run(string[] remainingArguments)
         {

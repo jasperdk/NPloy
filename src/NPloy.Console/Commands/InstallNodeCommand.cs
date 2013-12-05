@@ -105,11 +105,9 @@ namespace NPloy.Commands
         {
             var doc = new XmlDocument();
             doc.Load(Node);
-            var docNodes = doc.GetElementsByTagName("node");
-            var node = docNodes.Item(0);
-
-            if (node != null)
-                return node.Attributes["environment"].Value;
+            
+            if (doc.DocumentElement != null)
+                return doc.DocumentElement.Attributes["environment"].Value;
             return "";
         }
 
