@@ -18,6 +18,7 @@ namespace NPloy.Console.UnitTests.Commands
         public void SetUp()
         {
             _nPloyConfiguration = new Mock<INPloyConfiguration>();
+            _nPloyConfiguration.DefaultValue = DefaultValue.Mock;
             _powershellRunner = new Mock<IPowershellRunner>();
             _nugetRunner = new Mock<INuGetRunner>();
             _command = new InstallPackageCommand(_nPloyConfiguration.Object, _powershellRunner.Object, _nugetRunner.Object);
@@ -28,7 +29,29 @@ namespace NPloy.Console.UnitTests.Commands
         {
             // Arrange
 
-            _nugetRunner.Setup(n => n.RunNuGetInstall( "NPloy.Samples.WindowsService",null, null, It.IsAny<string>(), It.IsAny<string>()))
+            _nugetRunner.Setup(n => n.RunNuGetInstall("NPloy.Samples.WindowsService", null, null, It.IsAny<string>(), It.IsAny<string>()))
+                        .Returns(new List<string> { "NPloy.Samples.WindowsService.1.0.0.0" });
+
+            _nPloyConfiguration.Setup(f => f.GetFiles(It.Is<string>(s => s.EndsWith(@"NPloy.Samples.WindowsService.1.0.0.0\App_Install"))))
+                            .Returns(new List<string> { @"d:\NPloy.Samples.WindowsService.1.0.0.0\app_install\install.ps1" });
+
+            // Act
+            _command.Run(new[] { @"NPloy.Samples.WindowsService" });
+
+            // Assert
+            _powershellRunner.Verify(
+                p =>
+                p.RunPowershellScript(@"App_Install\install.ps1", It.IsAny<string>(),
+                                      It.Is<string>(s => s.EndsWith(@"\NPloy.Samples.WindowsService.1.0.0.0"))), Times.Once());
+
+        }
+
+        [Test]
+        public void Run_ShouldCallPowershellScriptWithPropertyParameter()
+        {
+            // Arrange
+
+            _nugetRunner.Setup(n => n.RunNuGetInstall( It.IsAny<string>(),null, null, It.IsAny<string>(), It.IsAny<string>()))
                         .Returns(new List<string> { "NPloy.Samples.WindowsService.1.0.0.0" });
 
             _nPloyConfiguration.Setup(f => f.GetFiles(It.Is<string>(s => s.EndsWith(@"NPloy.Samples.WindowsService.1.0.0.0\App_Install"))))
@@ -36,8 +59,30 @@ namespace NPloy.Console.UnitTests.Commands
 
             var properties = new Dictionary<string, string>();
             properties.Add("propkey", "propvalue");
-            _nPloyConfiguration.Setup(n => n.GetProperties("NPloy.Samples.WindowsService", "test", It.IsAny<string>())).Returns(properties);
+            _nPloyConfiguration.Setup(n => n.GetProperties("NPloy.Samples.WindowsService", "dev", It.IsAny<string>())).Returns(properties);
 
+
+            // Act
+            _command.Run(new[] { @"NPloy.Samples.WindowsService" });
+
+            // Assert
+            _powershellRunner.Verify(
+                p =>
+                p.RunPowershellScript(It.IsAny<string>(), It.Is<string>(s => s.Contains(@" -propkey ""propvalue""")),
+                                      It.IsAny<string>()), Times.Once());
+
+        }
+
+        [Test]
+        public void Run_ShouldCallPowershellScriptWithEnvironmentParameter()
+        {
+            // Arrange
+
+            _nugetRunner.Setup(n => n.RunNuGetInstall(It.IsAny<string>(), null, null, It.IsAny<string>(), It.IsAny<string>()))
+                        .Returns(new List<string> { "NPloy.Samples.WindowsService.1.0.0.0" });
+
+            _nPloyConfiguration.Setup(f => f.GetFiles(It.Is<string>(s => s.EndsWith(@"NPloy.Samples.WindowsService.1.0.0.0\App_Install"))))
+                            .Returns(new List<string> { @"d:\NPloy.Samples.WindowsService.1.0.0.0\app_install\install.ps1" });
 
             // Act
             _command.Environment = "test";
@@ -46,8 +91,8 @@ namespace NPloy.Console.UnitTests.Commands
             // Assert
             _powershellRunner.Verify(
                 p =>
-                p.RunPowershellScript(@"App_Install\install.ps1",@" -propkey ""propvalue""",
-                                      It.Is<string>(s => s.EndsWith(@"\NPloy.Samples.WindowsService.1.0.0.0"))), Times.Once());
+                p.RunPowershellScript(It.IsAny<string>(), It.Is<string>(s => s.Contains(@" -Environment ""test""")),
+                                      It.IsAny<string>()), Times.Once());
 
         }
 

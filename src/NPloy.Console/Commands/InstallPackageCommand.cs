@@ -112,6 +112,7 @@ namespace NPloy.Commands
         {
             var environment = Environment ?? "dev";
             var properties = _nPloyConfiguration.GetProperties(Package, environment, ConfigurationDirectory);
+            properties["Environment"] = environment;
             var argumentsString = "";
             foreach (var property in properties)
             {
