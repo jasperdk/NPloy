@@ -19,5 +19,8 @@ Task Test -depends Build, UnitTest  {
 }
 
 Task Pack -depends Test {
-	Exec { & .nuget\nuget pack NPloy.Console\NPloy.Console.nuspec -NoPackageAnalysis -OutputDirectory ..\packages }  
+	Exec { 
+		New-Item -ItemType Directory -Force -Path ..\packages 
+		& .nuget\nuget pack NPloy.Console\NPloy.Console.nuspec -NoPackageAnalysis -OutputDirectory ..\packages 
+		}  
 }
