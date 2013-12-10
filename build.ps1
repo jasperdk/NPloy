@@ -4,7 +4,7 @@ try
 {
 Import-Module .\psake.psm1
 pushd src
-Invoke-Psake default.ps1
+Invoke-Psake default.ps1 pack
 popd
 
 pushd samples
