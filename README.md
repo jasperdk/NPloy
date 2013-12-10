@@ -8,5 +8,7 @@ If you can live with having your configuration in a non-versioned database behin
 
 Until further you will have to go to the included samples to see how it works and they are also the only documentation. 
 
+NPloy has a continuous integration job running on <a
+href="http://www.jetbrains.com/teamcity" title="TeamCity by JetBrains">TeamCity by JetBrains</a>
 
 
