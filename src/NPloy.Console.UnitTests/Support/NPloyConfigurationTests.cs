@@ -49,8 +49,9 @@ namespace NPloy.Console.UnitTests.Support
             Assert.That(properties[property], Is.EqualTo(value));
         }
 
-        [Test]
-        public void GetProperties_ShouldReturnPropertyWithSubstitutedValue()
+        [TestCase("propertyValueSubstitutionTag", "test_hasbeensubstituted")]
+        [TestCase("propertyWithMultipleValueSubstitutionTag", "test_environment_hasbeensubstituted")]
+        public void GetProperties_ShouldReturnPropertyWithSubstitutedValue(string key, string expectedValue)
         {
             // Arrange
 
@@ -59,7 +60,7 @@ namespace NPloy.Console.UnitTests.Support
             var properties = nployConfiguration.GetProperties("package", "test", ".nploy");
 
             // Assert
-            Assert.That(properties["propertyValueSubstitutionTag"], Is.EqualTo("test_hasbeensubstituted"));
+            Assert.That(properties[key], Is.EqualTo(expectedValue));
         }
 
         [Test]

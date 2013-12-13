@@ -94,7 +94,7 @@ namespace NPloy.Support
                 var substitutionKey = match.Groups[1].Value;
                 if (result.ContainsKey(substitutionKey) && substitutionKey != keyValue.Key)
                     substitutionValue = result[substitutionKey];
-                result[keyValue.Key] = Regex.Replace(keyValue.Value, Pattern, substitutionValue);
+                result[keyValue.Key] = Regex.Replace(keyValue.Value, @"\$\(" + substitutionKey + @"\)", substitutionValue);
 
                 if (Regex.IsMatch(result[keyValue.Key], Pattern))
                     Substitute(result, result.Single(x => x.Key == keyValue.Key));
