@@ -1,6 +1,8 @@
 ﻿using System.IO;
+using System.Xml;
 using Moq;
 using NPloy.Commands;
+using NPloy.Support;
 using NUnit.Framework;
 
 namespace NPloy.Console.UnitTests.Commands
@@ -12,12 +14,17 @@ namespace NPloy.Console.UnitTests.Commands
         private Mock<ICommandFactory> _commandFactory;
         private Mock<InstallRoleCommand> _installRoleCommandMock;
         private Mock<StartNodeCommand> _startCommandMock;
+        private Mock<INPloyConfiguration> _nPloyConfiguration;
 
         [SetUp]
         public void SetUp()
         {
+            _nPloyConfiguration = new Mock<INPloyConfiguration>();
+            _nPloyConfiguration.Setup(c => c.FileExists(It.Is<string>(s => s.EndsWith("test.node")))).Returns(true);
+            var nodeDocument = CreateNodeFileForEnvironment("test.node", "test", "test1.role");
+            _nPloyConfiguration.Setup(c => c.GetNodeXml(It.Is<string>(s => s.EndsWith("test.node")))).Returns(nodeDocument);
             _commandFactory = new Mock<ICommandFactory>();
-            _command = new InstallNodeCommand(_commandFactory.Object);
+            _command = new InstallNodeCommand(_nPloyConfiguration.Object, _commandFactory.Object);
 
             _installRoleCommandMock = new Mock<InstallRoleCommand>();
             _commandFactory.Setup(x => x.GetCommand<InstallRoleCommand>()).Returns(_installRoleCommandMock.Object);
@@ -74,7 +81,8 @@ namespace NPloy.Console.UnitTests.Commands
         public void Run_WhenArgumentIsNodeFile_ShouldInstallAllRoles()
         {
             // Arrange
-            CreateNodeFile("test.node", "test1.role", "test2.role");
+            var nodeDocument = CreateNodeFileForEnvironment("test.node","test", "test1.role", "test2.role");
+            _nPloyConfiguration.Setup(c => c.GetNodeXml(It.Is<string>(s => s.EndsWith("test.node")))).Returns(nodeDocument);
 
             // Act
             _command.Run(new[] { "test.node" });
@@ -96,8 +104,8 @@ namespace NPloy.Console.UnitTests.Commands
         public void Run_WhenPackageFileExists_ShouldReturnMinus1AndNotCallCommand()
         {
             // Arrange
-            File.WriteAllText(InstallNodeCommand.PackageFileName, "test");
-
+            _nPloyConfiguration.Setup(c => c.FileExists(It.Is<string>(s => s.EndsWith(InstallNodeCommand.PackageFileName)))).Returns(true);
+            
             // Act
             var result = _command.Run(new[] { "test.node" });
 
@@ -124,8 +132,7 @@ namespace NPloy.Console.UnitTests.Commands
         public void Run_ShouldPassOnParametersToNodeCommand()
         {
             // Arrange
-            CreateNodeFile(@"test.node", "test1.role");
-
+            
             // Act
             _command.PackageSources = "packagesources";
             _command.NuGetPath = "nugetpath";
@@ -142,8 +149,7 @@ namespace NPloy.Console.UnitTests.Commands
         public void Run_WhenNPloyConfigIsInOtherFolder_ShouldSetConfigurationProperty()
         {
             // Arrange
-            CreateNodeFile(@".nploy\test.node", "test1.role");
-
+            
             // Act
             _command.Run(new[] { @".nploy\test.node" });
 
@@ -156,8 +162,10 @@ namespace NPloy.Console.UnitTests.Commands
             CreateNodeFileForEnvironment(node, "dev", roles);
         }
 
-        private static void CreateNodeFileForEnvironment(string node, string enviroment, params string[] roles)
+        private static XmlDocument CreateNodeFileForEnvironment(string node, string enviroment, params string[] roles)
         {
+            if(File.Exists(node))
+                File.Delete(node);
             var content = string.Format(@"<?xml version=""1.0"" encoding=""utf-8""?><node environment=""{0}""><roles>", enviroment);
             foreach (var role in roles)
             {
@@ -165,6 +173,9 @@ namespace NPloy.Console.UnitTests.Commands
             }
             content += @"</roles></node>";
             File.WriteAllText(node, content);
+            var document = new XmlDocument();
+            document.Load(node);
+            return document;
         }
     }
 }

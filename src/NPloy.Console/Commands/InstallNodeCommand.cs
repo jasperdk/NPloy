@@ -3,20 +3,24 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using ManyConsole;
+using NPloy.Support;
 
 namespace NPloy.Commands
 {
     public class InstallNodeCommand : ConsoleCommand
     {
+        private readonly INPloyConfiguration _nPloyConfiguration;
         private readonly ICommandFactory _commandFactory;
         public const string PackageFileName = "packages.config";
         public InstallNodeCommand()
-            : this(new CommandFactory())
+            : this(new NPloyConfiguration(),
+            new CommandFactory())
         {
         }
 
-        public InstallNodeCommand(ICommandFactory commandFactory)
+        public InstallNodeCommand(INPloyConfiguration nPloyConfiguration, ICommandFactory commandFactory)
         {
+            _nPloyConfiguration = nPloyConfiguration;
             _commandFactory = commandFactory;
             IsCommand("InstallNode", "InstallNode");
             HasAdditionalArguments(1, "Node");
@@ -39,7 +43,7 @@ namespace NPloy.Commands
                 SetDefaultOptionValues();
                 var packageFileName = Path.Combine(InstallDirectory, PackageFileName);
 
-                if (File.Exists(packageFileName))
+                if (_nPloyConfiguration.FileExists(packageFileName))
                 {
                     Console.WriteLine("Node has already been installed. Uninstall or update!");
                     return -1;
@@ -47,7 +51,7 @@ namespace NPloy.Commands
 
                 HandleArguments(remainingArguments);
 
-                if (!File.Exists(Node))
+                if (!_nPloyConfiguration.FileExists(Node))
                 {
                     Console.WriteLine("File not found: " + Node);
                     return 1;
@@ -103,11 +107,10 @@ namespace NPloy.Commands
 
         private string GetEnvironmentFromFile()
         {
-            var doc = new XmlDocument();
-            doc.Load(Node);
-            
-            if (doc.DocumentElement != null)
-                return doc.DocumentElement.Attributes["environment"].Value;
+            var nodeFileContent = _nPloyConfiguration.GetNodeXml(Node);
+
+            if (nodeFileContent.DocumentElement != null)
+                return nodeFileContent.DocumentElement.Attributes["environment"].Value;
             return "";
         }
 
@@ -121,9 +124,10 @@ namespace NPloy.Commands
         private IEnumerable<string> GetRolesFromFile()
         {
             var roles = new List<string>();
-            var doc = new XmlDocument();
-            doc.Load(Node);
-            var docRoles = doc.GetElementsByTagName("role");
+
+            var nodeFileContent = _nPloyConfiguration.GetNodeXml(Node);
+
+            var docRoles = nodeFileContent.GetElementsByTagName("role");
             foreach (XmlNode docRole in docRoles)
             {
                 roles.Add(docRole.Attributes["name"].Value);

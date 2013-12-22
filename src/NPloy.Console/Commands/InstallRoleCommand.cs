@@ -6,7 +6,7 @@ using NPloy.Support;
 
 namespace NPloy.Commands
 {
-    public interface IInstallRoleCommand
+    public interface IInstallRoleCommand 
     {
         int Run(string[] remainingArguments);
         string InstallDirectory { get; set; }

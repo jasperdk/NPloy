@@ -58,7 +58,7 @@ namespace NPloy.Commands
                 return c.ExitCode;
             }
         }
-        
+
         private void SetDefaultOptionValues()
         {
             var currentDirectory = Directory.GetCurrentDirectory();

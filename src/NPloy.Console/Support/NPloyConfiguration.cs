@@ -16,6 +16,7 @@ namespace NPloy.Support
         IEnumerable<string> GetInstalledPackges(string workingDirectory);
         void PackagesHasBeenUninstalled(string workingDirectory);
         RoleConfig GetRoleConfig(string roleFile);
+        XmlDocument GetNodeXml(string nodeFile);
     }
 
     public class PackageConfig
@@ -157,6 +158,13 @@ namespace NPloy.Support
                 });
             }
             return roleConfig;
+        }
+
+        public XmlDocument GetNodeXml(string nodeFile)
+        {
+            var doc = new XmlDocument();
+            doc.Load(nodeFile);
+            return doc;
         }
     }
 }

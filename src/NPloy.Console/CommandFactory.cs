@@ -10,19 +10,19 @@ namespace NPloy
         T GetCommand<T>() where T : ConsoleCommand;
     }
 
-    internal class CommandFactory:ICommandFactory
+    internal class CommandFactory : ICommandFactory
     {
         public IEnumerable<ConsoleCommand> GetCommands()
         {
             return ConsoleCommandDispatcher.FindCommandsInSameAssemblyAs(typeof(Program));
         }
 
-        public T GetCommand<T>() where T:ConsoleCommand
+        public T GetCommand<T>() where T : ConsoleCommand
         {
-            var result = GetCommands().FirstOrDefault(c => c.GetType() == typeof (T));
+            var result = GetCommands().FirstOrDefault(c => c.GetType() == typeof(T));
             if (result == null)
                 return null;
-            return (T) result;
+            return (T)result;
         }
     }
 }
