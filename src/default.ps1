@@ -1,7 +1,7 @@
 Task Default -depends Test
 
 Task Build {
-   Exec { msbuild "NPloy.sln" }
+   Exec { msbuild "NPloy.sln" /p:RunCodeAnalysis=true }
    Exec { & copy NPloy.Console\bin\debug\NPloy.Console.exe NPloy.Console\bin\debug\NPloy.exe}
    Exec { & .\packages\LibZ.Bootstrap.1.0.3.7\tools\libz.exe inject-dll --assembly NPloy.Console\bin\debug\NPloy.exe --include NPloy.Console\bin\debug\*.dll --move }
    Exec { & xcopy /y /e NPloy.Console\bin\debug\nploy.exe ..\install\}

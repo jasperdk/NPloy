@@ -2,7 +2,8 @@
 
 namespace NPloy
 {
-    public class ConsoleException : Exception
+    [Serializable]
+    public sealed class ConsoleException : Exception
     {
         public int ExitCode { get; set; }
 
