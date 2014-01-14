@@ -30,8 +30,8 @@ namespace NPloy.Console.IntegrationTests.Support
 
             // Assert
             Assert.That(result.Count, Is.EqualTo(2));
-            Assert.That(result[0], Is.EqualTo("FluentMigrator.1.1.1.0"));
-            Assert.That(result[1], Is.EqualTo("FluentMigrator.Tools.1.1.1.0"));
+            Assert.That(result[0], Is.EqualTo("FluentMigrator.1.1.2.1"));
+            Assert.That(result[1], Is.EqualTo("FluentMigrator.Tools.1.1.2.1"));
         }
 
         [Test]
