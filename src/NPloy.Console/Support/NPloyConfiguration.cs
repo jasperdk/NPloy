@@ -76,31 +76,28 @@ namespace NPloy.Support
             return result;
         }
 
-        private static void SubstituteValues(Dictionary<string, string> result)
+        private static void SubstituteValues(Dictionary<string, string> configProperties)
         {
-            var substitutionCandidates = result.Where(x => Regex.IsMatch(x.Value, Pattern)).ToArray();
-            for (var i = 0; i < substitutionCandidates.Length; i++)
+            var substitutionCandidates = configProperties.Where(x => Regex.IsMatch(x.Value, Pattern)).ToArray();
+            foreach (var substitutionCandidate in substitutionCandidates)
             {
-                var keyValue = substitutionCandidates[i];
-                Substitute(result, keyValue);
+                Substitute(configProperties, substitutionCandidate);
             }
         }
 
-        private static void Substitute(Dictionary<string, string> result, KeyValuePair<string, string> keyValue)
+        private static void Substitute(Dictionary<string, string> configProperties, KeyValuePair<string, string> substitutionCandidate)
         {
-            var match = Regex.Match(keyValue.Value, Pattern);
-            if (match.Success)
-            {
-                var substitutionValue = "";
-                var substitutionKey = match.Groups[1].Value;
-                if (result.ContainsKey(substitutionKey) && substitutionKey != keyValue.Key)
-                    substitutionValue = result[substitutionKey];
-                result[keyValue.Key] = Regex.Replace(keyValue.Value, @"\$\(" + substitutionKey + @"\)", substitutionValue);
+            var match = Regex.Match(substitutionCandidate.Value, Pattern);
+            if (!match.Success) return;
 
-                if (Regex.IsMatch(result[keyValue.Key], Pattern))
-                    Substitute(result, result.Single(x => x.Key == keyValue.Key));
-            }
-           
+            var substitutionValue = "";
+            var substitutionKey = match.Groups[1].Value.Replace(".","");
+            if (configProperties.ContainsKey(substitutionKey) && substitutionKey != substitutionCandidate.Key)
+                substitutionValue = configProperties[substitutionKey];
+            configProperties[substitutionCandidate.Key] = Regex.Replace(substitutionCandidate.Value, @"\$\(" + match.Groups[1].Value + @"\)", substitutionValue);
+
+            if (Regex.IsMatch(configProperties[substitutionCandidate.Key], Pattern))
+                Substitute(configProperties, configProperties.Single(x => x.Key == substitutionCandidate.Key));
         }
 
         private static void GetPropertiesFromFile(string file, Dictionary<string, string> result)

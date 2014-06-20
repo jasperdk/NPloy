@@ -75,5 +75,18 @@ namespace NPloy.Console.UnitTests.Support
             // Assert
             Assert.That(properties["propertyValueDoubleSubstitutionLoop"], Is.EqualTo("test_test_hasbeensubstituted"));
         }
+
+        [Test]
+        public void GetProperties_ShouldReturnDefaultPropertyWithSubstitutedValue()
+        {
+            // Arrange
+
+            // Act
+            var nployConfiguration = new NPloyConfiguration();
+            var properties = nployConfiguration.GetProperties("package", "test", ".nploy");
+
+            // Assert
+            Assert.That(properties["defaultPropertyValueSubstitutionTag"], Is.EqualTo("test_testvalue"));
+        }
     }
 }
