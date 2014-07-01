@@ -41,6 +41,8 @@ namespace NPloy.Commands
             HasOption("c|configuration=", "NPloy configuration directory", s => ConfigurationDirectory = s);
             HasOption("n|nuget=", "NuGet console path", s => NuGetPath = s);
             HasOption("s|start", "Start packages after install", s => AutoStart = s != null);
+            HasOption("o|verbose", "Verbose output", s => Verbose = s != null);
+            HasOption("properties=", "Additional properties", s => Properties = s);
         }
 
         public string Role { get; set; }
@@ -50,6 +52,8 @@ namespace NPloy.Commands
         public virtual string ConfigurationDirectory { get; set; }
         public virtual string NuGetPath { get; set; }
         public virtual bool AutoStart { get; set; }
+        public virtual bool Verbose { get; set; }
+        public virtual string Properties { get; set; }
 
         public override int Run(string[] remainingArguments)
         {
@@ -128,6 +132,8 @@ namespace NPloy.Commands
             installPackageCommand.NuGetPath = NuGetPath;
             installPackageCommand.Version = version;
             installPackageCommand.Environment = Environment;
+            installPackageCommand.Verbose = Verbose;
+            installPackageCommand.Properties = Properties;
             var exitCode = installPackageCommand.Run(new[] { package });
             if (exitCode > 0)
                 throw new ConsoleException(exitCode);

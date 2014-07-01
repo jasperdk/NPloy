@@ -28,6 +28,8 @@ namespace NPloy.Commands
             HasOption("p|packagesources=", "NuGet packagesources", s => PackageSources = s);
             HasOption("n|nuget=", "NuGet console path", s => NuGetPath = s);
             HasOption("s|start", "Start packages after install", s => AutoStart = s != null);
+            HasOption("o|verbose", "Verbose output", s => Verbose = s != null);
+            HasOption("properties=", "Additional properties", s => Properties = s);
         }
 
         public string Node;
@@ -35,6 +37,8 @@ namespace NPloy.Commands
         public string NuGetPath { get; set; }
         public string PackageSources { get; set; }
         public bool AutoStart { get; set; }
+        public bool Verbose { get; set; }
+        public string Properties { get; set; }
 
         public override int Run(string[] remainingArguments)
         {
@@ -94,6 +98,8 @@ namespace NPloy.Commands
             installRoleCommand.PackageSources = PackageSources;
             installRoleCommand.ConfigurationDirectory = nployConfigurationPath;
             installRoleCommand.NuGetPath = NuGetPath;
+            installRoleCommand.Verbose = Verbose;
+            installRoleCommand.Properties = Properties;
             var result = installRoleCommand.Run(new[] { role });
             return result;
         }

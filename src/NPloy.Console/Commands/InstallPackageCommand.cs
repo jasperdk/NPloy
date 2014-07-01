@@ -39,6 +39,8 @@ namespace NPloy.Commands
             HasOption("c|configuration=", "NPloy configuration directory", s => ConfigurationDirectory = s);
             HasOption("n|nuget=", "NuGet console path", s => NuGetPath = s);
             HasOption("v|version=", "Version of package to install ", s => Version = s);
+            HasOption("o|verbose", "Verbose output", s => Verbose = s != null);
+            HasOption("properties=", "Additional properties", s => Properties = s);
         }
 
         public string Package { get; set; }
@@ -48,6 +50,8 @@ namespace NPloy.Commands
         public virtual string ConfigurationDirectory { get; set; }
         public virtual string NuGetPath { get; set; }
         public virtual string Version { get; set; }
+        public virtual bool Verbose { get; set; }
+        public virtual string Properties { get; set; }
 
         public override int Run(string[] remainingArguments)
         {
@@ -90,7 +94,10 @@ namespace NPloy.Commands
             Console.WriteLine("Running install scripts in (" + installedPackageScriptPath + ") for package: " + Package);
 
             var files = _nPloyConfiguration.GetFiles(installedPackageScriptPath);
-            foreach (var file in files.Where(f => Path.GetFileName(f).ToLower().StartsWith("install")).OrderBy(n => n).ToArray()
+            foreach (
+                var file in
+                    files.Where(f => Path.GetFileName(f).ToLower().StartsWith("install"))
+                    .OrderBy(n => n).ToArray()
                 )
             {
                 Console.WriteLine("Running install script : " + file);
@@ -111,15 +118,42 @@ namespace NPloy.Commands
         private void RunCommand(string installedPackage, string file)
         {
             var environment = Environment ?? "dev";
+
             var properties = _nPloyConfiguration.GetProperties(Package, environment, ConfigurationDirectory);
+            
+            AddAdditionalProperties(properties);
+
             properties["Environment"] = environment;
+
+            _nPloyConfiguration.SubstituteValues(properties);
+
             var argumentsString = "";
             foreach (var property in properties)
             {
                 argumentsString += " -" + property.Key + @" """ + property.Value + @"""";
             }
 
+            if (Verbose)
+                Console.WriteLine("Running '{0}' script with arguments: {1}", file, argumentsString);
             _powershellRunner.RunPowershellScript(file, argumentsString, Path.Combine(WorkingDirectory, installedPackage));
+        }
+
+        private void AddAdditionalProperties(Dictionary<string, string> properties)
+        {
+            if (!string.IsNullOrEmpty(Properties))
+            {
+                var additionalProperties = Properties.Split(';');
+                foreach (var additionalProperty in additionalProperties)
+                {
+                    var items = additionalProperty.Split('=');
+                    var key = items[0].Replace(".", "");
+                    if (!string.IsNullOrEmpty(key))
+                    {
+                        var value = additionalProperty.Remove(0, items[0].Length + 1);
+                        properties[key] = value;
+                    }
+                }
+            }
         }
 
         private IList<string> NugetInstallPackage(string package, string packageSources)
@@ -127,7 +161,7 @@ namespace NPloy.Commands
             if (!string.IsNullOrEmpty(WorkingDirectory) && !Directory.Exists(WorkingDirectory))
                 Directory.CreateDirectory(WorkingDirectory);
 
-            return _nuGetRunner.RunNuGetInstall(package,Version, packageSources, NuGetPath, WorkingDirectory);
+            return _nuGetRunner.RunNuGetInstall(package, Version, packageSources, NuGetPath, WorkingDirectory);
         }
     }
 }

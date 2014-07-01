@@ -11,6 +11,7 @@ namespace NPloy.Support
     {
         IList<string> GetFiles(string s);
         Dictionary<string, string> GetProperties(string package, string environment, string configurationDirectory);
+        void SubstituteValues(Dictionary<string, string> configProperties);
         bool FileExists(string filePath);
         bool HasInstalledPackages(string workingDirectory);
         IEnumerable<string> GetInstalledPackges(string workingDirectory);
@@ -71,12 +72,10 @@ namespace NPloy.Support
                     configurationDirectory + @"environments\" + environment + @"\" + package + ".prop", result);
             }
 
-            SubstituteValues(result);
-
             return result;
         }
 
-        private static void SubstituteValues(Dictionary<string, string> configProperties)
+        public void SubstituteValues(Dictionary<string, string> configProperties)
         {
             var substitutionCandidates = configProperties.Where(x => Regex.IsMatch(x.Value, Pattern)).ToArray();
             foreach (var substitutionCandidate in substitutionCandidates)

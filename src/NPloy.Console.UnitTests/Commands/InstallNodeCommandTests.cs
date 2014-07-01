@@ -136,6 +136,7 @@ namespace NPloy.Console.UnitTests.Commands
             // Act
             _command.PackageSources = "packagesources";
             _command.NuGetPath = "nugetpath";
+            _command.Properties = "properties";
             _command.Run(new[] { @"test.node" });
 
             // Assert
@@ -143,6 +144,7 @@ namespace NPloy.Console.UnitTests.Commands
             _installRoleCommandMock.VerifySet(c => c.AutoStart = true, Times.Never);
             _installRoleCommandMock.VerifySet(c => c.NuGetPath = "nugetpath", Times.Once());
             _installRoleCommandMock.VerifySet(c => c.ConfigurationDirectory = "", Times.Once());
+            _installRoleCommandMock.VerifySet(c => c.Properties = "properties", Times.Once());
         }
 
         [Test]

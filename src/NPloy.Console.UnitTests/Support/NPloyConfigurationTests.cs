@@ -6,6 +6,14 @@ namespace NPloy.Console.UnitTests.Support
     [TestFixture]
     public class NPloyConfigurationTests
     {
+        private NPloyConfiguration _nployConfiguration;
+
+        [SetUp]
+        public void SetUp()
+        {
+            _nployConfiguration = new NPloyConfiguration();
+        }
+
         [Test]
         public void ShouldMethod()
         {
@@ -25,8 +33,7 @@ namespace NPloy.Console.UnitTests.Support
             // Arrange
 
             // Act
-            var nployConfiguration = new NPloyConfiguration();
-            var properties = nployConfiguration.GetProperties("package","test",".nploy");
+            var properties = _nployConfiguration.GetProperties("package","test",".nploy");
 
             // Assert
             Assert.That(properties.Count, Is.GreaterThan(1));
@@ -42,8 +49,7 @@ namespace NPloy.Console.UnitTests.Support
             // Arrange
 
             // Act
-            var nployConfiguration = new NPloyConfiguration();
-            var properties = nployConfiguration.GetProperties("package", "test", ".nploy");
+            var properties = _nployConfiguration.GetProperties("package", "test", ".nploy");
 
             // Assert
             Assert.That(properties[property], Is.EqualTo(value));
@@ -51,40 +57,40 @@ namespace NPloy.Console.UnitTests.Support
 
         [TestCase("propertyValueSubstitutionTag", "test_hasbeensubstituted")]
         [TestCase("propertyWithMultipleValueSubstitutionTag", "test_environment_hasbeensubstituted")]
-        public void GetProperties_ShouldReturnPropertyWithSubstitutedValue(string key, string expectedValue)
+        public void SubstituteValues_ShouldSubstituteValue(string key, string expectedValue)
         {
             // Arrange
+            var properties = _nployConfiguration.GetProperties("package", "test", ".nploy");
 
             // Act
-            var nployConfiguration = new NPloyConfiguration();
-            var properties = nployConfiguration.GetProperties("package", "test", ".nploy");
+            _nployConfiguration.SubstituteValues(properties);
 
             // Assert
             Assert.That(properties[key], Is.EqualTo(expectedValue));
         }
 
         [Test]
-        public void GetProperties_ShouldReturnPropertyWithDoubleSubstitutedValue()
+        public void SubstituteValues_ShouldSubstituteDoubleSubstitutedValue()
         {
             // Arrange
+            var properties = _nployConfiguration.GetProperties("package", "test", ".nploy");
 
             // Act
-            var nployConfiguration = new NPloyConfiguration();
-            var properties = nployConfiguration.GetProperties("package", "test", ".nploy");
+            _nployConfiguration.SubstituteValues(properties);
 
             // Assert
             Assert.That(properties["propertyValueDoubleSubstitutionLoop"], Is.EqualTo("test_test_hasbeensubstituted"));
         }
 
         [Test]
-        public void GetProperties_ShouldReturnDefaultPropertyWithSubstitutedValue()
+        public void SubstituteValues_ShouldSubstituteDefaultPropertyWithSubstitutedValue()
         {
             // Arrange
+            var properties = _nployConfiguration.GetProperties("package", "test", ".nploy");
 
             // Act
-            var nployConfiguration = new NPloyConfiguration();
-            var properties = nployConfiguration.GetProperties("package", "test", ".nploy");
-
+            _nployConfiguration.SubstituteValues(properties);
+            
             // Assert
             Assert.That(properties["defaultPropertyValueSubstitutionTag"], Is.EqualTo("test_testvalue"));
         }

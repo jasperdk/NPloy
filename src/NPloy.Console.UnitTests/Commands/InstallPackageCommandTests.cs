@@ -73,6 +73,30 @@ namespace NPloy.Console.UnitTests.Commands
 
         }
 
+        [Test, Ignore("TODO")]
+        public void ShouldCallSubstitute()
+        {
+            // Arrange
+
+            // Act
+
+            // Assert
+            Assert.Fail("Not implemented");
+            
+        }
+
+        [Test, Ignore("TODO")]
+        public void ShouldAddAdditionalProperties()
+        {
+            // Arrange
+
+            // Act
+
+            // Assert
+            Assert.Fail("Not implemented");
+            
+        }
+
         [Test]
         public void Run_ShouldCallPowershellScriptWithEnvironmentParameter()
         {
