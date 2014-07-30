@@ -29,7 +29,7 @@ namespace NPloy.Console.UnitTests.Commands
         {
             // Arrange
 
-            _nugetRunner.Setup(n => n.RunNuGetInstall("NPloy.Samples.WindowsService", null, null, It.IsAny<string>(), It.IsAny<string>()))
+            _nugetRunner.Setup(n => n.RunNuGetInstall("NPloy.Samples.WindowsService", null, null, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>()))
                         .Returns(new List<string> { "NPloy.Samples.WindowsService.1.0.0.0" });
 
             _nPloyConfiguration.Setup(f => f.GetFiles(It.Is<string>(s => s.EndsWith(@"NPloy.Samples.WindowsService.1.0.0.0\App_Install"))))
@@ -51,7 +51,7 @@ namespace NPloy.Console.UnitTests.Commands
         {
             // Arrange
 
-            _nugetRunner.Setup(n => n.RunNuGetInstall( It.IsAny<string>(),null, null, It.IsAny<string>(), It.IsAny<string>()))
+            _nugetRunner.Setup(n => n.RunNuGetInstall( It.IsAny<string>(),null, null, It.IsAny<string>(), It.IsAny<string>(),It.IsAny<bool>()))
                         .Returns(new List<string> { "NPloy.Samples.WindowsService.1.0.0.0" });
 
             _nPloyConfiguration.Setup(f => f.GetFiles(It.Is<string>(s => s.EndsWith(@"NPloy.Samples.WindowsService.1.0.0.0\App_Install"))))
@@ -102,7 +102,7 @@ namespace NPloy.Console.UnitTests.Commands
         {
             // Arrange
 
-            _nugetRunner.Setup(n => n.RunNuGetInstall(It.IsAny<string>(), null, null, It.IsAny<string>(), It.IsAny<string>()))
+            _nugetRunner.Setup(n => n.RunNuGetInstall(It.IsAny<string>(), null, null, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>()))
                         .Returns(new List<string> { "NPloy.Samples.WindowsService.1.0.0.0" });
 
             _nPloyConfiguration.Setup(f => f.GetFiles(It.Is<string>(s => s.EndsWith(@"NPloy.Samples.WindowsService.1.0.0.0\App_Install"))))
@@ -128,19 +128,33 @@ namespace NPloy.Console.UnitTests.Commands
             _nugetRunner.Setup(
                 n =>
                 n.RunNuGetInstall(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
-                                  It.IsAny<string>())).Returns(new List<string>());
-            _nPloyConfiguration.Setup(f => f.GetFiles(It.Is<string>(s => s.EndsWith(@"NPloy.Samples.WindowsService.1.0.0.0\App_Install"))))
-                            .Returns(new List<string> { @"d:\NPloy.Samples.WindowsService.1.0.0.0\app_install\install.ps1" });
+                                  It.IsAny<string>(), It.IsAny<bool>())).Returns(new List<string>());
 
             // Act
             _command.Version = "1.1.1.1";
             _command.Run(new[] { @"NPloy.Samples.WindowsService" });
 
             // Assert
-            _nugetRunner.Verify(n => n.RunNuGetInstall("NPloy.Samples.WindowsService", "1.1.1.1", null, It.IsAny<string>(), It.IsAny<string>()),Times.Once());
-                        
+            _nugetRunner.Verify(n => n.RunNuGetInstall("NPloy.Samples.WindowsService", "1.1.1.1", null, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>()), Times.Once());
+        }
 
+        [TestCase(true)]
+        [TestCase(false)]
+        public void Run_WhenIncludePrerelease_CallNugetWithIncludePrerelease(bool includePrerelase)
+        {
+            // Arrange
 
+            _nugetRunner.Setup(
+                n =>
+                n.RunNuGetInstall(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+                                  It.IsAny<string>(), It.IsAny<bool>())).Returns(new List<string>());
+            
+            // Act
+            _command.IncludePrerelease = includePrerelase;
+            _command.Run(new[] { @"NPloy.Samples.WindowsService" });
+
+            // Assert
+            _nugetRunner.Verify(n => n.RunNuGetInstall("NPloy.Samples.WindowsService", null, null, It.IsAny<string>(), It.IsAny<string>(), includePrerelase), Times.Once());
         }
     }
 }

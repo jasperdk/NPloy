@@ -43,6 +43,7 @@ namespace NPloy.Commands
             HasOption("s|start", "Start packages after install", s => AutoStart = s != null);
             HasOption("o|verbose", "Verbose output", s => Verbose = s != null);
             HasOption("properties=", "Additional properties", s => Properties = s);
+            HasOption("IncludePrerelease", "Include prerelease packages", s => IncludePrerelease = s != null);
         }
 
         public string Role { get; set; }
@@ -54,6 +55,7 @@ namespace NPloy.Commands
         public virtual bool AutoStart { get; set; }
         public virtual bool Verbose { get; set; }
         public virtual string Properties { get; set; }
+        public virtual bool IncludePrerelease { get; set; }
 
         public override int Run(string[] remainingArguments)
         {
@@ -134,6 +136,7 @@ namespace NPloy.Commands
             installPackageCommand.Environment = Environment;
             installPackageCommand.Verbose = Verbose;
             installPackageCommand.Properties = Properties;
+            installPackageCommand.IncludePrerelease = IncludePrerelease;
             var exitCode = installPackageCommand.Run(new[] { package });
             if (exitCode > 0)
                 throw new ConsoleException(exitCode);

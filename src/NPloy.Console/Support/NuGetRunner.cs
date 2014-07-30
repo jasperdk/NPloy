@@ -7,7 +7,7 @@ namespace NPloy.Support
 {
     public interface INuGetRunner
     {
-        IList<string> RunNuGetInstall(string package, string version, string packageSources, string nugetPath, string workingDirectory);
+        IList<string> RunNuGetInstall(string package, string version, string packageSources, string nugetPath, string workingDirectory, bool includePrereleases = false);
     }
 
     public class NuGetRunner : INuGetRunner
@@ -25,7 +25,7 @@ namespace NPloy.Support
             _commandRunner = commandRunner;
         }
 
-        public IList<string> RunNuGetInstall(string package, string version, string packageSources, string nugetPath, string workingDirectory)
+        public IList<string> RunNuGetInstall(string package, string version, string packageSources, string nugetPath, string workingDirectory,bool includePrereleases=false)
         {
             var packageSourcesArgument = "";
             if (!string.IsNullOrEmpty(packageSources))
@@ -41,11 +41,15 @@ namespace NPloy.Support
 
             var nugetFile = @"nuget";
             if (!string.IsNullOrEmpty(nugetPath))
-                nugetFile = Path.Combine(nugetPath, nugetFile); 
+                nugetFile = Path.Combine(nugetPath, nugetFile);
+
+            var prereleaseFlag = "";
+            if (includePrereleases)
+                prereleaseFlag = "-Prerelease";
 
             var installedPackages = new List<string>();
-            var script = string.Format(@"install {0} {1} {2} {3}", package, outputDirectoryArgument, packageSourcesArgument,
-                          versionArgument);
+            var script = string.Format(@"install {0} {1} {2} {3} {4}", package, outputDirectoryArgument, packageSourcesArgument,
+                          versionArgument,prereleaseFlag);
             var strOutput = _commandRunner.RunCommand(nugetFile, script, workingDirectory);
 
             var matches = Regex.Matches(strOutput, @"Successfully installed '([^']*)'\.", RegexOptions.CultureInvariant);

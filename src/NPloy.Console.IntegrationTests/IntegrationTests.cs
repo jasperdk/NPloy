@@ -27,7 +27,7 @@ namespace NPloy.Console.IntegrationTests
         }
 
         [Test]
-        public void ShouldMethod()
+        public void ShouldInstallAndUninstall()
         {
 
             // Install node

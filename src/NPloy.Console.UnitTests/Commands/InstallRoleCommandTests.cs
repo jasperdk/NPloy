@@ -68,6 +68,7 @@ namespace NPloy.Console.UnitTests.Commands
             _command.ConfigurationDirectory = "config";
             _command.InstallDirectory = "install";
             _command.Properties = "properties";
+            _command.IncludePrerelease = true;
             var result = _command.Run(new[] { RoleCommandFile });
 
             // Assert
@@ -78,6 +79,7 @@ namespace NPloy.Console.UnitTests.Commands
             _installPackageCommandMock.VerifySet(c => c.NuGetPath = "nugetpath", Times.Once());
             _installPackageCommandMock.VerifySet(c => c.ConfigurationDirectory = "config", Times.Once());
             _installPackageCommandMock.VerifySet(c => c.Properties = "properties", Times.Once());
+            _installPackageCommandMock.VerifySet(c => c.IncludePrerelease = true, Times.Once());
         }
     }
 

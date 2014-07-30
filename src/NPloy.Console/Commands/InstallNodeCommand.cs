@@ -30,6 +30,7 @@ namespace NPloy.Commands
             HasOption("s|start", "Start packages after install", s => AutoStart = s != null);
             HasOption("o|verbose", "Verbose output", s => Verbose = s != null);
             HasOption("properties=", "Additional properties", s => Properties = s);
+            HasOption("IncludePrerelease", "Include prerelease packages", s => IncludePrerelease = s != null);
         }
 
         public string Node;
@@ -39,6 +40,7 @@ namespace NPloy.Commands
         public bool AutoStart { get; set; }
         public bool Verbose { get; set; }
         public string Properties { get; set; }
+        public bool IncludePrerelease { get; set; }
 
         public override int Run(string[] remainingArguments)
         {
@@ -100,6 +102,7 @@ namespace NPloy.Commands
             installRoleCommand.NuGetPath = NuGetPath;
             installRoleCommand.Verbose = Verbose;
             installRoleCommand.Properties = Properties;
+            installRoleCommand.IncludePrerelease = IncludePrerelease;
             var result = installRoleCommand.Run(new[] { role });
             return result;
         }

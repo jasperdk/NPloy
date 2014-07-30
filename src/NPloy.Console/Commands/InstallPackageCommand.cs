@@ -41,6 +41,7 @@ namespace NPloy.Commands
             HasOption("v|version=", "Version of package to install ", s => Version = s);
             HasOption("o|verbose", "Verbose output", s => Verbose = s != null);
             HasOption("properties=", "Additional properties", s => Properties = s);
+            HasOption("IncludePrerelease", "Include prerelease packages", s => IncludePrerelease = s != null);
         }
 
         public string Package { get; set; }
@@ -52,6 +53,7 @@ namespace NPloy.Commands
         public virtual string Version { get; set; }
         public virtual bool Verbose { get; set; }
         public virtual string Properties { get; set; }
+        public virtual bool IncludePrerelease { get; set; }
 
         public override int Run(string[] remainingArguments)
         {
@@ -120,7 +122,7 @@ namespace NPloy.Commands
             var environment = Environment ?? "dev";
 
             var properties = _nPloyConfiguration.GetProperties(Package, environment, ConfigurationDirectory);
-            
+
             AddAdditionalProperties(properties);
 
             properties["Environment"] = environment;
@@ -161,7 +163,7 @@ namespace NPloy.Commands
             if (!string.IsNullOrEmpty(WorkingDirectory) && !Directory.Exists(WorkingDirectory))
                 Directory.CreateDirectory(WorkingDirectory);
 
-            return _nuGetRunner.RunNuGetInstall(package, Version, packageSources, NuGetPath, WorkingDirectory);
+            return _nuGetRunner.RunNuGetInstall(package, Version, packageSources, NuGetPath, WorkingDirectory, IncludePrerelease);
         }
     }
 }
