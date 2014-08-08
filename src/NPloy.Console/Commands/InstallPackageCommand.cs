@@ -33,7 +33,7 @@ namespace NPloy.Commands
 
             IsCommand("InstallPackage", "InstallPackage");
             HasAdditionalArguments(1, "Package");
-            HasOption("environment", "", e => Environment = e);
+            HasOption("e|environment=", "", e => Environment = e);
             HasOption("d|directory=", "Install in this directory", s => WorkingDirectory = s);
             HasOption("p|packagesources=", "Packagesources", s => PackageSources = s);
             HasOption("c|configuration=", "NPloy configuration directory", s => ConfigurationDirectory = s);
