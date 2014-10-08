@@ -39,12 +39,13 @@ namespace NPloy.Commands
 
                 var applicationPath = Path.Combine(WorkingDirectory, Package);
 
-                if (!_nPloyConfiguration.FileExists(applicationPath + @"\App_Install\Uninstall.ps1"))
+                var uninstallScript = applicationPath + @"\App_Install\Uninstall.ps1";
+                if (!_nPloyConfiguration.FileExists(uninstallScript))
                     return 0;
 
                 Console.WriteLine("Running uninstall scripts for package: " + Package);
 
-                _powershellRunner.RunPowershellScript(@".\App_Install\Uninstall.ps1", null, applicationPath);
+                _powershellRunner.RunPowershellScript(uninstallScript, null, applicationPath);
                 return 0;
             }
             catch (ConsoleException c)

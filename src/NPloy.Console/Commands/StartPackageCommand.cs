@@ -40,12 +40,13 @@ namespace NPloy.Commands
 
                 var applicationPath = Path.Combine(WorkingDirectory ,InstalledPackage);
 
-                if (!_nPloyConfiguration.FileExists(applicationPath + @"\App_Install\Start.ps1"))
+                var startScript = applicationPath + @"\App_Install\Start.ps1";
+                if (!_nPloyConfiguration.FileExists(startScript))
                     return 0;
 
                 Console.WriteLine("Running start scripts for package: " + InstalledPackage);
 
-                _powershellRunner.RunPowershellScript(@".\App_Install\Start.ps1", null, applicationPath);
+                _powershellRunner.RunPowershellScript(startScript, null, applicationPath);
                 return 0;
             }
             catch (ConsoleException c)

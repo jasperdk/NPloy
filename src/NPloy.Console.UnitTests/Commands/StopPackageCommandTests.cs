@@ -33,8 +33,10 @@ namespace NPloy.Console.UnitTests.Commands
             // Assert
             _powershellRunner.Verify(
                 p =>
-                p.RunPowershellScript(@".\App_Install\Stop.ps1",null, It.Is<string>(s=>s.EndsWith(@"\NPloy.Samples.WindowsService.1.0.0.0"))),
-                Times.Once());
+                p.RunPowershellScript(
+                    It.Is<string>(f => f.ToLower().EndsWith(@"\app_install\stop.ps1")), null,
+                                  It.Is<string>(s => s.EndsWith(@"\NPloy.Samples.WindowsService.1.0.0.0"))),
+                    Times.Once());
         }
     }
 }
