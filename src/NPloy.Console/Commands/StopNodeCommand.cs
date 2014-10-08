@@ -65,6 +65,8 @@ namespace NPloy.Commands
             var currentDirectory = Directory.GetCurrentDirectory();
             if (string.IsNullOrEmpty(WorkingDirectory))
                 WorkingDirectory = currentDirectory;
+            if (!Path.IsPathRooted(WorkingDirectory))
+                WorkingDirectory = Path.Combine(Directory.GetCurrentDirectory(), WorkingDirectory);
         }
     }
 }

@@ -4,7 +4,8 @@ $ErrorActionPreference = "stop"
 
 try
 {
-	
+
+	Write-Host "Running install script"	
 	& .\NPloy.Samples.WindowsService.exe install 
 	#-username $ServiceUsername -password $ServicePassword
 	

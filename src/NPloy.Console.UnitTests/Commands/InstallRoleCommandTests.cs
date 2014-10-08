@@ -66,7 +66,7 @@ namespace NPloy.Console.UnitTests.Commands
             _command.Environment= "test";
             _command.NuGetPath = "nugetpath";
             _command.ConfigurationDirectory = "config";
-            _command.InstallDirectory = "install";
+            _command.InstallDirectory = @"c:\install";
             _command.Properties = "properties";
             _command.IncludePrerelease = true;
             var result = _command.Run(new[] { RoleCommandFile });
@@ -75,7 +75,7 @@ namespace NPloy.Console.UnitTests.Commands
             Assert.That(result, Is.EqualTo(0));
             _installPackageCommandMock.VerifySet(c => c.PackageSources="source", Times.Once());
             _installPackageCommandMock.VerifySet(c => c.Environment = "test", Times.Once());
-            _installPackageCommandMock.VerifySet(c => c.WorkingDirectory = "install", Times.Once());
+            _installPackageCommandMock.VerifySet(c => c.WorkingDirectory = @"c:\install", Times.Once());
             _installPackageCommandMock.VerifySet(c => c.NuGetPath = "nugetpath", Times.Once());
             _installPackageCommandMock.VerifySet(c => c.ConfigurationDirectory = "config", Times.Once());
             _installPackageCommandMock.VerifySet(c => c.Properties = "properties", Times.Once());

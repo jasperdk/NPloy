@@ -5,7 +5,7 @@ namespace NPloy.Support
 {
     public interface IPowershellRunner
     {
-        string RunPowershellScript(string file, string arguments, string workingDirectory);
+        void RunPowershellScript(string file, string arguments, string workingDirectory);
     }
 
     public class PowerShellRunner : IPowershellRunner
@@ -22,16 +22,16 @@ namespace NPloy.Support
             _commandRunner = commandRunner;
         }
 
-        public string RunPowershellScript(string file, string arguments, string workingDirectory)
+        public void RunPowershellScript(string file, string arguments, string workingDirectory)
         {
             if (!File.Exists(file))
             {
                 Console.WriteLine("Executing powershell script: File not found:" + file);
-                return "";
+                return;
             }
 
             var powershellArguments = "-executionpolicy unrestricted -Noninteractive -file " + file + " " + arguments;
-            return _commandRunner.RunCommand(@"powershell", powershellArguments, workingDirectory);
+            _commandRunner.RunCommand(@"powershell", powershellArguments, workingDirectory);
         }
     }
 }

@@ -25,17 +25,20 @@ namespace NPloy.Support
                 };
 
             pProcess.Start();
-            
+
             var strOutput = pProcess.StandardOutput.ReadToEnd();
-            Console.WriteLine(strOutput);
-            
+
             pProcess.WaitForExit();
 
+            Console.WriteLine(strOutput);
+
             if (pProcess.ExitCode > 0)
+            {
+                Console.WriteLine("Executing command {0} failed with exit code {1}", fileName, pProcess.ExitCode);
                 throw new ConsoleException(pProcess.ExitCode);
+            }
 
             return strOutput;
-
         }
     }
 }

@@ -112,6 +112,8 @@ namespace NPloy.Commands
             var currentDirectory = Directory.GetCurrentDirectory();
             if (string.IsNullOrEmpty(InstallDirectory))
                 InstallDirectory = currentDirectory;
+            if (!Path.IsPathRooted(InstallDirectory))
+                InstallDirectory = Path.Combine(Directory.GetCurrentDirectory(), InstallDirectory);
         }
 
         private string GetEnvironmentFromFile()
