@@ -103,7 +103,7 @@ namespace NPloy.Commands
                 )
             {
                 Console.WriteLine("Running install script : " + file);
-                RunCommand(installedPackage, @"App_Install\" + Path.GetFileName(file));
+                RunCommand(installedPackage, file);
             }
 
             using (StreamWriter sw = File.AppendText(Path.Combine(WorkingDirectory, "packages.config")))

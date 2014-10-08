@@ -39,7 +39,7 @@ namespace NPloy.Support
             if (!string.IsNullOrEmpty(version))
                 versionArgument = @"-Version " + version + "";
 
-            var nugetFile = @"nuget";
+            var nugetFile = @"nuget.exe";
             if (!string.IsNullOrEmpty(nugetPath))
                 nugetFile = Path.Combine(nugetPath, nugetFile);
 

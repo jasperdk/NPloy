@@ -41,7 +41,7 @@ namespace NPloy.Console.UnitTests.Commands
             // Assert
             _powershellRunner.Verify(
                 p =>
-                p.RunPowershellScript(@"App_Install\install.ps1", It.IsAny<string>(),
+                p.RunPowershellScript(It.Is<string>(s=>s.ToLower().EndsWith(@"app_install\install.ps1")), It.IsAny<string>(),
                                       It.Is<string>(s => s.EndsWith(@"\NPloy.Samples.WindowsService.1.0.0.0"))), Times.Once());
 
         }
