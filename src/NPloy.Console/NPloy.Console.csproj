@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandFactory.cs" />
+    <Compile Include="Commands\UpdateNodeCommand.cs" />
     <Compile Include="Commands\StopNodeCommand.cs" />
     <Compile Include="Commands\StartNodeCommand.cs" />
     <Compile Include="Support\CommandRunnerBase.cs" />

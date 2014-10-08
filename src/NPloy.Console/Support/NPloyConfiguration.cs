@@ -29,6 +29,11 @@ namespace NPloy.Support
         }
 
         public string Version { get; set; }
+
+        public string FullName
+        {
+            get { return Id + "." + Version; }
+        }
     }
 
     public class RoleConfig
@@ -90,7 +95,7 @@ namespace NPloy.Support
             if (!match.Success) return;
 
             var substitutionValue = "";
-            var substitutionKey = match.Groups[1].Value.Replace(".","");
+            var substitutionKey = match.Groups[1].Value.Replace(".", "");
             if (configProperties.ContainsKey(substitutionKey) && substitutionKey != substitutionCandidate.Key)
                 substitutionValue = configProperties[substitutionKey];
             configProperties[substitutionCandidate.Key] = Regex.Replace(substitutionCandidate.Value, @"\$\(" + match.Groups[1].Value + @"\)", substitutionValue);
