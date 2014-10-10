@@ -24,7 +24,7 @@ namespace NPloy.Console.UnitTests.Commands
             // Arrange
             _nPloyConfiguration.Setup(n => n.HasInstalledPackages(@"d:\")).Returns(true);
             _nPloyConfiguration.Setup(n => n.GetInstalledPackges(@"d:\"))
-                               .Returns(new[] {"NPloy.Samples.WindowsService.1.0.0.0"});
+                               .Returns(new[] {new PackageConfig{Id= "NPloy.Samples.WindowsService",Version = "1.0.0.0"}});
 
             // Act
             _command.Run(new []{@"d:\"});

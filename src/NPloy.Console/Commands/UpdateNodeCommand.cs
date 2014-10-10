@@ -12,23 +12,29 @@ namespace NPloy.Commands
     {
         private readonly INPloyConfiguration _nPloyConfiguration;
         private readonly ICommandFactory _commandFactory;
+        private readonly INuGetRunner _nuGetRunner;
         public const string PackageFileName = "packages.config";
         public UpdateNodeCommand()
             : this(new NPloyConfiguration(),
-            new CommandFactory())
+            new CommandFactory(),
+            new NuGetRunner(new CommandRunner()))
         {
         }
 
-        public UpdateNodeCommand(INPloyConfiguration nPloyConfiguration, ICommandFactory commandFactory)
+        public UpdateNodeCommand(INPloyConfiguration nPloyConfiguration,
+            ICommandFactory commandFactory,
+            INuGetRunner nuGetRunner)
         {
             _nPloyConfiguration = nPloyConfiguration;
             _commandFactory = commandFactory;
+            _nuGetRunner = nuGetRunner;
             IsCommand("UpdateNode", "UpdateNode");
             HasAdditionalArguments(1, "Node");
             HasOption("d|directory=", "Install to this directory", s => InstallDirectory = s);
             HasOption("p|packagesources=", "NuGet packagesources", s => PackageSources = s);
             HasOption("n|nuget=", "NuGet console path", s => NuGetPath = s);
             HasOption("s|start", "Start packages after install", s => AutoStart = s != null);
+            HasOption("t|stop", "Stop all packages before update", s => FullStop = s != null);
             HasOption("o|verbose", "Verbose output", s => Verbose = s != null);
             HasOption("properties=", "Additional properties", s => Properties = s);
             HasOption("IncludePrerelease", "Include prerelease packages", s => IncludePrerelease = s != null);
@@ -40,6 +46,7 @@ namespace NPloy.Commands
         public string NuGetPath { get; set; }
         public string PackageSources { get; set; }
         public bool AutoStart { get; set; }
+        public bool FullStop { get; set; }
         public bool Verbose { get; set; }
         public string Properties { get; set; }
         public bool IncludePrerelease { get; set; }
@@ -68,13 +75,12 @@ namespace NPloy.Commands
 
                 Console.WriteLine("Updating node: " + Node);
                 var nployConfigurationPath = Path.GetDirectoryName(Node);
-                var roles = GetRolesFromFile();
-                string environment = GetEnvironmentFromFile();
-
-                var installedPackages = _nPloyConfiguration.GetInstalledPackges(InstallDirectory).ToArray();
                 
+                var installedPackages = _nPloyConfiguration.GetInstalledPackges(InstallDirectory).ToArray();
+
                 var packageCandidates = new List<PackageConfig>();
 
+                var roles = GetRolesFromFile();
                 foreach (var role in roles)
                 {
                     var roleFile = Path.Combine(nployConfigurationPath, "roles", role);
@@ -92,24 +98,54 @@ namespace NPloy.Commands
                     }
                 }
 
-                var packagesToInstall = packageCandidates.Where(pc=>installedPackages.All(ip => ip != pc.FullName)).ToList();
-                var packagesToRemove = installedPackages.Where(ip => packageCandidates.All(pc => ip != pc.FullName)).ToList();
+                var packagesToInstall =
+                    packageCandidates.Where(
+                        pc =>
+                        installedPackages.All(ip => !ip.Id.Equals(pc.Id, StringComparison.InvariantCultureIgnoreCase)))
+                                     .ToList();
+                var packagesToRemove =
+                    installedPackages.Where(
+                        ip =>
+                        packageCandidates.All(pc => !ip.Id.Equals(pc.Id, StringComparison.InvariantCultureIgnoreCase)))
+                                     .ToList();
 
-                var packagesToUpdateCandidates = packageCandidates.Where(pc => installedPackages.Any(ip => ip == pc.FullName)).ToList();
+                var packagesToUpdateCandidates =
+                    installedPackages.Where(
+                        ip =>
+                        packageCandidates.Any(pc => ip.Id.Equals(pc.Id, StringComparison.InvariantCultureIgnoreCase)))
+                                     .ToList();
 
                 var packagesToUpdate = GetPackagesToUpdate(packagesToUpdateCandidates).ToList();
-                
-                StopPackages(packagesToRemove.Union(packagesToUpdate.Select(p=>p.FullName)));
 
+                if (!packagesToUpdate.Any())
+                {
+                    Console.WriteLine("No packages to update");
+                    return 0;
+                }
+
+                if (FullStop)
+                    StopNode();
+                else
+                    StopPackages(
+                        packagesToRemove.Union(
+                            installedPackages.Where(
+                                p =>
+                                packagesToUpdate.Any(
+                                    pc => pc.Id.Equals(p.Id, StringComparison.InvariantCultureIgnoreCase)))));
+
+                UninstallPackages(packagesToRemove.Union(
+                            packagesToUpdateCandidates.Where(pc => packagesToUpdate.Any(p => p.Id == pc.Id))));
                 InstallPackages(packagesToUpdate.Union(packagesToInstall), nployConfigurationPath);
-                
+
                 if (AutoStart)
-                    StartPackages(packagesToUpdate.Union(packagesToInstall));
+                {
+                    StartNode();
+                }
 
                 if (RemoveFilesAndDirectories)
                     DeleteDirectories(
                         packagesToRemove.Union(
-                            packagesToUpdateCandidates.Where(pc => packagesToUpdate.Any(p => p.Id == pc.Id)).Select(p=>p.FullName)));
+                            packagesToUpdateCandidates.Where(pc => packagesToUpdate.Any(p => p.Id == pc.Id))));
 
                 return 0;
             }
@@ -119,13 +155,45 @@ namespace NPloy.Commands
             }
         }
 
+        private void UninstallPackages(IEnumerable<PackageConfig> packages)
+        {
+            foreach (var package in packages)
+            {
+                UninstallPackage(package);
+            }
+        }
+
+        private void UninstallPackage(PackageConfig package)
+        {
+            var uninstallPackageCommand = _commandFactory.GetCommand<UninstallPackageCommand>();
+            uninstallPackageCommand.WorkingDirectory = InstallDirectory;
+            var exitCode = uninstallPackageCommand.Run(new[] { package.FullName });
+            if (exitCode > 0)
+                throw new ConsoleException(exitCode);
+
+        }
+
+        private void StopNode()
+        {
+            var stopNodeCommand = _commandFactory.GetCommand<StopNodeCommand>();
+            stopNodeCommand.WorkingDirectory = InstallDirectory;
+            stopNodeCommand.Run(new[] { Node });
+        }
+
+        private void StartNode()
+        {
+            var startNodeCommand = _commandFactory.GetCommand<StartNodeCommand>();
+            startNodeCommand.WorkingDirectory = InstallDirectory;
+            startNodeCommand.Run(new[] { Node });
+        }
+
         private IEnumerable<PackageConfig> GetPackagesToUpdate(IEnumerable<PackageConfig> packagesToUpdateCandidates)
         {
-            throw new NotImplementedException();
-            var nugetPackages = new Dictionary<string,string>(); //TODO get available nuget packages
+            var nugetPackages = _nuGetRunner.RunNuGetList(PackageSources, NuGetPath, InstallDirectory, IncludePrerelease);
+
             foreach (var packagesToUpdateCandidate in packagesToUpdateCandidates)
             {
-                if (packagesToUpdateCandidate.Version.CompareTo(nugetPackages[packagesToUpdateCandidate.Id])<0)
+                if (packagesToUpdateCandidate.Version.CompareTo(nugetPackages[packagesToUpdateCandidate.Id]) < 0)
                     yield return new PackageConfig { Id = packagesToUpdateCandidate.Id, Version = nugetPackages[packagesToUpdateCandidate.Id] };
             }
         }
@@ -134,11 +202,11 @@ namespace NPloy.Commands
         {
             foreach (var package in packages)
             {
-                InstallPackage(package,nployConfigurationPath);
+                InstallPackage(package, nployConfigurationPath);
             }
         }
 
-        private void InstallPackage(PackageConfig package,string nployConfigurationPath)
+        private void InstallPackage(PackageConfig package, string nployConfigurationPath)
         {
             var installPackageCommand = _commandFactory.GetCommand<InstallPackageCommand>();
             installPackageCommand.WorkingDirectory = InstallDirectory;
@@ -156,41 +224,28 @@ namespace NPloy.Commands
 
         }
 
-        private void DeleteDirectories(IEnumerable<string> packagesToRemove)
+        private void DeleteDirectories(IEnumerable<PackageConfig> packagesToRemove)
         {
             foreach (var package in packagesToRemove)
             {
-                var pathToDelete = Path.Combine(InstallDirectory, package);
+                var pathToDelete = Path.Combine(InstallDirectory, package.FullName);
                 if (Directory.Exists(pathToDelete))
                     Directory.Delete(pathToDelete, true);
             }
         }
 
-        private void StartPackages(IEnumerable<PackageConfig> packages)
-        {
-            foreach (var package in packages)
-            {
-                var startPackageCommand = _commandFactory.GetCommand<StartPackageCommand>();
-                startPackageCommand.WorkingDirectory = InstallDirectory;
-                var result = startPackageCommand.Run(new[] { package.Id });
-                if (result > 0)
-                        throw new ConsoleException(result);
-
-            }
-        }
-
-        private void StopPackages(IEnumerable<string> packages)
+        private void StopPackages(IEnumerable<PackageConfig> packages)
         {
             foreach (var package in packages)
             {
                 var stopPackageCommand = _commandFactory.GetCommand<StopPackageCommand>();
                 stopPackageCommand.WorkingDirectory = InstallDirectory;
-                var result = stopPackageCommand.Run(new[] { package });
+                var result = stopPackageCommand.Run(new[] { package.FullName });
                 if (result > 0)
                     throw new ConsoleException(result);
             }
         }
-        
+
         private void SetDefaultOptionValues()
         {
             var currentDirectory = Directory.GetCurrentDirectory();

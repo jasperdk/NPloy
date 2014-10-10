@@ -61,20 +61,20 @@ namespace NPloy.Commands
             }
         }
 
-        private void DeleteDirectories(IEnumerable<string> installedPackages)
+        private void DeleteDirectories(IEnumerable<PackageConfig> installedPackages)
         {
             foreach (var installedPackage in installedPackages)
             {
-                if(string.IsNullOrEmpty(installedPackage))
+                if(string.IsNullOrEmpty(installedPackage.FullName))
                     continue;
                 
-                var pathToDelete = Path.Combine(InstallDirectory, installedPackage);
+                var pathToDelete = Path.Combine(InstallDirectory, installedPackage.FullName);
                 if (Directory.Exists(pathToDelete))
                     Directory.Delete(pathToDelete, true);
             }
         }
 
-        private void UninstallPackages(IEnumerable<string> installedPackages)
+        private void UninstallPackages(IEnumerable<PackageConfig> installedPackages)
         {
             foreach (var package in installedPackages)
             {
@@ -82,7 +82,7 @@ namespace NPloy.Commands
                     {
                         WorkingDirectory = InstallDirectory
                     };
-                uninstallPackageCommand.Run(new[] { package });
+                uninstallPackageCommand.Run(new[] { package.FullName });
             }
         }
 

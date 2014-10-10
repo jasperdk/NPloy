@@ -63,11 +63,19 @@ namespace NPloy.Commands
                 SetDefaultOptions();
 
                 Console.WriteLine("Install package: " + Package);
-                var installedPackages = NugetInstallPackage(Package, PackageSources);
-
-                foreach (var installedPackage in installedPackages)
+                try
                 {
-                    RunInstallScripts(installedPackage);
+                    
+                var installedNugetPackages =NugetInstallPackage(Package, PackageSources);
+                var installedNugetPackage =
+                    installedNugetPackages.Single(n => n.ToLower().StartsWith(Package.ToLower() + "."));
+                RunInstallScripts(installedNugetPackage);
+                WritePackageNameToPackageConfig(installedNugetPackage);
+                }
+                catch (Exception)
+                {
+                    //TODO Cleanup();
+                    throw;
                 }
 
                 return 0;
@@ -75,6 +83,23 @@ namespace NPloy.Commands
             catch (ConsoleException c)
             {
                 return c.ExitCode;
+            }
+        }
+
+        private void WritePackageNameToPackageConfig(string installedNugetPackage)
+        {
+            var fileName =Path.Combine(WorkingDirectory, "packages.config");
+            var packages = File.ReadAllLines(fileName);
+            var installedNugetPackageConfig = NPloyConfiguration.GetPackageConfig(installedNugetPackage);
+            if (packages.Any(p=>p.ToLower().StartsWith(installedNugetPackageConfig.Id.ToLower())))
+            {
+                throw new NotImplementedException();
+                //replace version number
+            }
+            else
+            using (StreamWriter sw = File.AppendText(fileName))
+            {
+                sw.WriteLine(installedNugetPackage);
             }
         }
 
@@ -106,11 +131,6 @@ namespace NPloy.Commands
             {
                 Console.WriteLine("Running install script : " + file);
                 RunCommand(installedPackage, file);
-            }
-
-            using (StreamWriter sw = File.AppendText(Path.Combine(WorkingDirectory, "packages.config")))
-            {
-                sw.WriteLine(installedPackage);
             }
         }
 

@@ -76,9 +76,9 @@ namespace NPloy.Commands
 
                 var roleConfig = _nPloyConfiguration.GetRoleConfig(roleFile);
 
-
-                if (!string.IsNullOrEmpty(roleConfig.SubFolder))
-                    InstallDirectory += @"\" + roleConfig.SubFolder;
+                //This is not supported when uninstalling etc
+                //if (!string.IsNullOrEmpty(roleConfig.SubFolder))
+                //    InstallDirectory += @"\" + roleConfig.SubFolder;
 
                 foreach (var packageConfig in roleConfig.Packages)
                 {

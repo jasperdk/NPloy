@@ -46,7 +46,7 @@ namespace NPloy.Commands
                         {
                             WorkingDirectory = WorkingDirectory
                         };
-                    var result = startPackageCommand.Run(new[] { package });
+                    var result = startPackageCommand.Run(new[] { package.FullName });
                     if (result > 0)
                         return result;
                 }

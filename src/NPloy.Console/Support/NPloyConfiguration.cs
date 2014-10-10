@@ -14,7 +14,7 @@ namespace NPloy.Support
         void SubstituteValues(Dictionary<string, string> configProperties);
         bool FileExists(string filePath);
         bool HasInstalledPackages(string workingDirectory);
-        IEnumerable<string> GetInstalledPackges(string workingDirectory);
+        IEnumerable<PackageConfig> GetInstalledPackges(string workingDirectory);
         void PackagesHasBeenUninstalled(string workingDirectory);
         RoleConfig GetRoleConfig(string roleFile);
         XmlDocument GetNodeXml(string nodeFile);
@@ -129,9 +129,28 @@ namespace NPloy.Support
             return File.Exists(workingDirectory + @"\packages.config");
         }
 
-        public IEnumerable<string> GetInstalledPackges(string workingDirectory)
+        public IEnumerable<PackageConfig> GetInstalledPackges(string workingDirectory)
         {
-            return File.ReadAllLines(workingDirectory + @"\packages.config");
+            var packages = File.ReadAllLines(workingDirectory + @"\packages.config");
+            foreach (var package in packages)
+            {
+                var packageConfig = GetPackageConfig(package);
+
+                if (packageConfig != null)
+                    yield return packageConfig;
+            }
+        }
+
+        public static PackageConfig GetPackageConfig(string package)
+        {
+            PackageConfig packageConfig = null;
+            var regex = new Regex(@"(.*?)\.(\d+(\.\d+)+)");
+            var match = regex.Match(package);
+            if (match.Success)
+            {
+                packageConfig = new PackageConfig {Id = match.Groups[1].Value, Version = match.Groups[2].Value};
+            }
+            return packageConfig;
         }
 
         public void PackagesHasBeenUninstalled(string workingDirectory)

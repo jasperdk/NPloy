@@ -74,7 +74,9 @@
     <None Include="local.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="NPloy.Samples.WindowsService.nuspec" />
+    <None Include="NPloy.Samples.WindowsService.nuspec">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />

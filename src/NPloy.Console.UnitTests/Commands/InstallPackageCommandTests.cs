@@ -128,7 +128,7 @@ namespace NPloy.Console.UnitTests.Commands
             _nugetRunner.Setup(
                 n =>
                 n.RunNuGetInstall(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
-                                  It.IsAny<string>(), It.IsAny<bool>())).Returns(new List<string>());
+                                  It.IsAny<string>(), It.IsAny<bool>())).Returns(new List<string> { "NPloy.Samples.WindowsService.1.1.1.1" });
 
             // Act
             _command.Version = "1.1.1.1";
@@ -147,7 +147,7 @@ namespace NPloy.Console.UnitTests.Commands
             _nugetRunner.Setup(
                 n =>
                 n.RunNuGetInstall(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
-                                  It.IsAny<string>(), It.IsAny<bool>())).Returns(new List<string>());
+                                  It.IsAny<string>(), It.IsAny<bool>())).Returns(new List<string> { "NPloy.Samples.WindowsService.1.0.0.0" });
             
             // Act
             _command.IncludePrerelease = includePrerelase;
