@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using Moq;
 using NPloy.Commands;
 using NPloy.Support;
@@ -22,6 +23,7 @@ namespace NPloy.Console.UnitTests.Commands
             _powershellRunner = new Mock<IPowershellRunner>();
             _nugetRunner = new Mock<INuGetRunner>();
             _command = new InstallPackageCommand(_nPloyConfiguration.Object, _powershellRunner.Object, _nugetRunner.Object);
+            File.Delete("packages.config");
         }
 
         [Test]
@@ -69,6 +71,33 @@ namespace NPloy.Console.UnitTests.Commands
             _powershellRunner.Verify(
                 p =>
                 p.RunPowershellScript(It.IsAny<string>(), It.Is<string>(s => s.Contains(@" -propkey ""propvalue""")),
+                                      It.IsAny<string>()), Times.Once());
+
+        }
+
+        [Test]
+        public void Run_ShouldCallPowershellScriptWithEscapedPropertyParameter()
+        {
+            // Arrange
+
+            _nugetRunner.Setup(n => n.RunNuGetInstall(It.IsAny<string>(), null, null, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>()))
+                        .Returns(new List<string> { "NPloy.Samples.WindowsService.1.0.0.0" });
+
+            _nPloyConfiguration.Setup(f => f.GetFiles(It.Is<string>(s => s.EndsWith(@"NPloy.Samples.WindowsService.1.0.0.0\App_Install"))))
+                            .Returns(new List<string> { @"d:\NPloy.Samples.WindowsService.1.0.0.0\app_install\install.ps1" });
+
+            var properties = new Dictionary<string, string>();
+            properties.Add("propkey", @"prop""va#lu'e");
+            _nPloyConfiguration.Setup(n => n.GetProperties("NPloy.Samples.WindowsService", "dev", It.IsAny<string>())).Returns(properties);
+
+
+            // Act
+            _command.Run(new[] { @"NPloy.Samples.WindowsService" });
+
+            // Assert
+            _powershellRunner.Verify(
+                p =>
+                p.RunPowershellScript(It.IsAny<string>(), It.Is<string>(s => s.Contains(@" -propkey ""prop`""""va#lu'e""")),
                                       It.IsAny<string>()), Times.Once());
 
         }
@@ -158,3 +187,4 @@ namespace NPloy.Console.UnitTests.Commands
         }
     }
 }
+

@@ -65,12 +65,12 @@ namespace NPloy.Commands
                 Console.WriteLine("Install package: " + Package);
                 try
                 {
-                    
-                var installedNugetPackages =NugetInstallPackage(Package, PackageSources);
-                var installedNugetPackage =
-                    installedNugetPackages.Single(n => n.ToLower().StartsWith(Package.ToLower() + "."));
-                RunInstallScripts(installedNugetPackage);
-                WritePackageNameToPackageConfig(installedNugetPackage);
+
+                    var installedNugetPackages = NugetInstallPackage(Package, PackageSources);
+                    var installedNugetPackage =
+                        installedNugetPackages.Single(n => n.ToLower().StartsWith(Package.ToLower() + "."));
+                    RunInstallScripts(installedNugetPackage);
+                    WritePackageNameToPackageConfig(installedNugetPackage);
                 }
                 catch (Exception)
                 {
@@ -88,19 +88,19 @@ namespace NPloy.Commands
 
         private void WritePackageNameToPackageConfig(string installedNugetPackage)
         {
-            var fileName =Path.Combine(WorkingDirectory, "packages.config");
-            var packages = File.ReadAllLines(fileName);
-            var installedNugetPackageConfig = NPloyConfiguration.GetPackageConfig(installedNugetPackage);
-            if (packages.Any(p=>p.ToLower().StartsWith(installedNugetPackageConfig.Id.ToLower())))
-            {
-                throw new NotImplementedException();
-                //replace version number
-            }
-            else
-            using (StreamWriter sw = File.AppendText(fileName))
-            {
-                sw.WriteLine(installedNugetPackage);
-            }
+            var fileName = Path.Combine(WorkingDirectory, "packages.config");
+            //var packages = File.Exists(fileName)?File.ReadAllLines(fileName):new string[0];
+            //var installedNugetPackageConfig = NPloyConfiguration.GetPackageConfig(installedNugetPackage);
+            //if (packages.Any(p => p.ToLower().StartsWith(installedNugetPackageConfig.Id.ToLower())))
+            //{
+            //    throw new NotImplementedException();
+            //    //replace version number in file
+            //}
+            //else
+                using (StreamWriter sw = File.AppendText(fileName))
+                {
+                    sw.WriteLine(installedNugetPackage);
+                }
         }
 
         private void SetDefaultOptions()
@@ -154,12 +154,23 @@ namespace NPloy.Commands
             var argumentsString = "";
             foreach (var property in properties)
             {
-                argumentsString += " -" + property.Key + @" """ + property.Value + @"""";
+                argumentsString += string.Format(@" -{0} ""{1}""", property.Key,CommandLineEscape( PowerShellEscape(property.Value)));
             }
 
             if (Verbose)
                 Console.WriteLine("Running '{0}' script with arguments: {1}", file, argumentsString);
             _powershellRunner.RunPowershellScript(file, argumentsString, Path.Combine(WorkingDirectory, installedPackage));
+        }
+
+        private string PowerShellEscape(string value)
+        {
+            return value.Replace("`", "``")
+                        .Replace(@"""", @"`""");
+        }
+
+        private string CommandLineEscape(string value)
+        {
+            return value.Replace(@"""", @""""""); 
         }
 
         private void AddAdditionalProperties(Dictionary<string, string> properties)
