@@ -144,7 +144,7 @@ namespace NPloy.Support
         public static PackageConfig GetPackageConfig(string package)
         {
             PackageConfig packageConfig = null;
-            var regex = new Regex(@"(.*?)\.(\d+(\.\d+)+)");
+            var regex = new Regex(@"(.*?)\.(\d+(\.\d+)+.*)");
             var match = regex.Match(package);
             if (match.Success)
             {

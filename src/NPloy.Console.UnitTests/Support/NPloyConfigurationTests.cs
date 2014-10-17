@@ -94,5 +94,20 @@ namespace NPloy.Console.UnitTests.Support
             // Assert
             Assert.That(properties["defaultPropertyValueSubstitutionTag"], Is.EqualTo("test_testvalue"));
         }
+
+        [TestCase("NPloy.Samples.Web.1.0.0.44", "NPloy.Samples.Web", "1.0.0.44")]
+        [TestCase("NPloy.Samples.Web.1.0.0.44-prerelease", "NPloy.Samples.Web", "1.0.0.44-prerelease")]
+        public void GetPackageConfig_ShouldParsePackageVersion(string packageVersion,string expectedId, string expectedVersion)
+        {
+            // Arrange
+            
+            // Act
+            var packageConfig = NPloyConfiguration.GetPackageConfig(packageVersion);
+
+            // Assert
+            Assert.That(packageConfig.Id, Is.EqualTo(expectedId));
+            Assert.That(packageConfig.Version, Is.EqualTo(expectedVersion));
+            Assert.That(packageConfig.FullName, Is.EqualTo(packageVersion));
+        }
     }
 }
