@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Xml;
+using System.Xml.Linq;
 
 namespace NPloy.Support
 {
@@ -17,7 +17,7 @@ namespace NPloy.Support
         IEnumerable<PackageConfig> GetInstalledPackges(string workingDirectory);
         void PackagesHasBeenUninstalled(string workingDirectory);
         RoleConfig GetRoleConfig(string roleFile);
-        XmlDocument GetNodeXml(string nodeFile);
+        XDocument GetNodeXml(string nodeFile);
     }
 
     public class PackageConfig
@@ -162,28 +162,27 @@ namespace NPloy.Support
         {
             var roleConfig = new RoleConfig();
 
-            var doc = new XmlDocument();
-            doc.Load(roleFile);
-            var rootElement = doc.DocumentElement;
-            roleConfig.SubFolder = rootElement.Attributes["subFolder"] != null ? rootElement.Attributes["subFolder"].Value : "";
+            var doc = XDocument.Load(roleFile);
+            
+            var rootElement = doc.Root;
+            roleConfig.SubFolder = rootElement.Attribute("subFolder") != null ? rootElement.Attribute("subFolder").Value : "";
 
-            var docPackages = doc.GetElementsByTagName("package");
-            foreach (XmlNode docPackage in docPackages)
+            var docPackages = doc.Descendants("package");
+            foreach (var docPackage in docPackages)
             {
                 roleConfig.Packages.Add(new PackageConfig
                 {
-                    Id = docPackage.Attributes["id"].Value,
+                    Id = docPackage.Attribute("id").Value,
                     Version =
-                        docPackage.Attributes["version"] != null ? docPackage.Attributes["version"].Value : null
+                        docPackage.Attribute("version") != null ? docPackage.Attribute("version").Value : null
                 });
             }
             return roleConfig;
         }
 
-        public XmlDocument GetNodeXml(string nodeFile)
+        public XDocument GetNodeXml(string nodeFile)
         {
-            var doc = new XmlDocument();
-            doc.Load(nodeFile);
+            var doc = XDocument.Load(nodeFile);
             return doc;
         }
     }

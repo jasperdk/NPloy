@@ -1,4 +1,5 @@
-﻿using NPloy.Support;
+﻿using System.Linq;
+using NPloy.Support;
 using NUnit.Framework;
 
 namespace NPloy.Console.UnitTests.Support
@@ -93,6 +94,18 @@ namespace NPloy.Console.UnitTests.Support
             
             // Assert
             Assert.That(properties["defaultPropertyValueSubstitutionTag"], Is.EqualTo("test_testvalue"));
+        }
+
+        [Test]
+        public void GetRoleConfig_ShouldParsePackage()
+        {
+            // Arrange
+            
+            // Act
+            var roleConfig = _nployConfiguration.GetRoleConfig(@".nploy\roles\Test.role");
+
+            // Assert
+            Assert.That(roleConfig.Packages.Select(p => p.Id), Is.EqualTo(new[] { "NPloy.Samples.Web" }));
         }
 
         [TestCase("NPloy.Samples.Web.1.0.0.44", "NPloy.Samples.Web", "1.0.0.44")]

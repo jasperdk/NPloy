@@ -259,8 +259,8 @@ namespace NPloy.Commands
         {
             var nodeFileContent = _nPloyConfiguration.GetNodeXml(Node);
 
-            if (nodeFileContent.DocumentElement != null)
-                return nodeFileContent.DocumentElement.Attributes["environment"].Value;
+            if (nodeFileContent.Root != null)
+                return nodeFileContent.Root.Attribute("environment").Value;
             return "";
         }
 
@@ -277,10 +277,10 @@ namespace NPloy.Commands
 
             var nodeFileContent = _nPloyConfiguration.GetNodeXml(Node);
 
-            var docRoles = nodeFileContent.GetElementsByTagName("role");
-            foreach (XmlNode docRole in docRoles)
+            var docRoles = nodeFileContent.Elements().Where(e=>e.Name=="role");
+            foreach (var docRole in docRoles)
             {
-                roles.Add(docRole.Attributes["name"].Value);
+                roles.Add(docRole.Attribute("name").Value);
             }
             return roles;
         }

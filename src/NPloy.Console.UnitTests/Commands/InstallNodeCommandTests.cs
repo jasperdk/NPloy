@@ -1,5 +1,8 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Xml;
+using System.Xml.Linq;
 using Moq;
 using NPloy.Commands;
 using NPloy.Support;
@@ -40,7 +43,8 @@ namespace NPloy.Console.UnitTests.Commands
         public void Run_WhenArgumentIsNodeFile_ShouldInstall()
         {
             // Arrange
-            CreateNodeFile("test.node", "test1.role");
+            var nodeDocument = CreateNodeFileForEnvironment("test.node", "test", "test1.role");
+            _nPloyConfiguration.Setup(c => c.GetNodeXml(It.Is<string>(s => s.EndsWith("test.node")))).Returns(nodeDocument);
 
             // Act
             var result = _command.Run(new[] { "test.node" });
@@ -54,7 +58,8 @@ namespace NPloy.Console.UnitTests.Commands
         public void Run_WhenArgumentIsNodeFileWithoutFileExtension_ShouldInstall()
         {
             // Arrange
-            CreateNodeFile("test.node", "test1.role");
+            var nodeDocument = CreateNodeFileForEnvironment("test.node", "test", "test1.role");
+            _nPloyConfiguration.Setup(c => c.GetNodeXml(It.Is<string>(s => s.EndsWith("test.node")))).Returns(nodeDocument);
 
             // Act
             _command.Run(new[] { "test" });
@@ -67,7 +72,8 @@ namespace NPloy.Console.UnitTests.Commands
         public void Run_ShouldPassOnEnvironment()
         {
             // Arrange
-            CreateNodeFileForEnvironment("test.node", "test", "test1.role");
+            var nodeDocument = CreateNodeFileForEnvironment("test.node", "test", "test1.role");
+            _nPloyConfiguration.Setup(c => c.GetNodeXml(It.Is<string>(s => s.EndsWith("test.node")))).Returns(nodeDocument);
 
             // Act
             _command.Run(new[] { "test.node" });
@@ -161,25 +167,22 @@ namespace NPloy.Console.UnitTests.Commands
             _installRoleCommandMock.VerifySet(c => c.ConfigurationDirectory = ".nploy", Times.Once());
         }
 
-        private static void CreateNodeFile(string node, params string[] roles)
+        private static XDocument CreateNodeFile(string node, params string[] roles)
         {
-            CreateNodeFileForEnvironment(node, "dev", roles);
+            return CreateNodeFileForEnvironment(node, "dev", roles);
         }
 
-        private static XmlDocument CreateNodeFileForEnvironment(string node, string enviroment, params string[] roles)
+        private static XDocument CreateNodeFileForEnvironment(string node, string enviroment, params string[] roles)
         {
-            if(File.Exists(node))
-                File.Delete(node);
-            var content = string.Format(@"<?xml version=""1.0"" encoding=""utf-8""?><node environment=""{0}""><roles>", enviroment);
-            foreach (var role in roles)
-            {
-                content += @"<role name=""" + role + @""" />";
-            }
-            content += @"</roles></node>";
-            File.WriteAllText(node, content);
-            var document = new XmlDocument();
-            document.Load(node);
-            return document;
+            var roleElements = roles.Select(role => new XElement("role", new XAttribute("name", role))).ToList();
+
+            var element = new XElement("node",
+                new XAttribute("environment", enviroment),
+                new XElement("roles",roleElements)
+                );
+
+            var doc = new XDocument(element);
+            return doc;
         }
     }
 }

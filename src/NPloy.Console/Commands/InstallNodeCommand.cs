@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using ManyConsole;
 using NPloy.Support;
@@ -120,8 +121,8 @@ namespace NPloy.Commands
         {
             var nodeFileContent = _nPloyConfiguration.GetNodeXml(Node);
 
-            if (nodeFileContent.DocumentElement != null)
-                return nodeFileContent.DocumentElement.Attributes["environment"].Value;
+            if (nodeFileContent.Root != null)
+                return nodeFileContent.Root.Attribute("environment").Value;
             return "";
         }
 
@@ -134,16 +135,9 @@ namespace NPloy.Commands
 
         private IEnumerable<string> GetRolesFromFile()
         {
-            var roles = new List<string>();
-
             var nodeFileContent = _nPloyConfiguration.GetNodeXml(Node);
 
-            var docRoles = nodeFileContent.GetElementsByTagName("role");
-            foreach (XmlNode docRole in docRoles)
-            {
-                roles.Add(docRole.Attributes["name"].Value);
-            }
-            return roles;
+            return nodeFileContent.Descendants("role").Select(role => role.Attribute("name").Value).ToList();
         }
     }
 

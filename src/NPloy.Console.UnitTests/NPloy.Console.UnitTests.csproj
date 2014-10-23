@@ -76,6 +76,9 @@
     <None Include=".nploy\environments\test\env.prop">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include=".nploy\roles\Test.role">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -84,9 +87,7 @@
       <Name>NPloy.Console</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include=".nploy\roles\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
