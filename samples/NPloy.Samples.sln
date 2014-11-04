@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30723.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NPloy.Samples.WindowsService", "NPloy.Samples.WindowsService\NPloy.Samples.WindowsService.csproj", "{F2BC7674-9130-4DE2-BF7F-FA8DE31D908A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NPloy.Samples.Migrations", "NPloy.Samples.Migrations\NPloy.Samples.Migrations.csproj", "{436FBBFF-F29E-44A0-9AC0-1CA37E0AAF52}"
@@ -9,10 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NPloy.Samples.Web", "NPloy.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nploy", ".nploy", "{5C4F3477-8A16-4840-BC99-470D488FC704}"
 	ProjectSection(SolutionItems) = preProject
-		configuration\localhost.node = configuration\localhost.node
-		configuration\prodappserver.node = configuration\prodappserver.node
-		configuration\prodwebserver.node = configuration\prodwebserver.node
-		configuration\testserver.node = configuration\testserver.node
+		.nploy\localhost.node = .nploy\localhost.node
+		.nploy\prodappserver.node = .nploy\prodappserver.node
+		.nploy\prodwebserver.node = .nploy\prodwebserver.node
+		.nploy\testserver.node = .nploy\testserver.node
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0835429E-6FD6-4B2F-8B22-3432D5B04883}"
@@ -31,6 +33,31 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NPloy.Samples.SmokeTests", "NPloy.Samples.SmokeTests\NPloy.Samples.SmokeTests.csproj", "{3C16013D-D7AC-4197-B24B-91D4C5EB83B9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NPloy.Samples.Iis", "NPloy.Samples.Iis\NPloy.Samples.Iis.csproj", "{5CAB6DD3-9663-4B82-ADBE-4DD5A63D7A41}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Roles", "Roles", "{25460608-6047-47E0-8CC5-66DEF286D207}"
+	ProjectSection(SolutionItems) = preProject
+		.nploy\roles\appserver.role = .nploy\roles\appserver.role
+		.nploy\roles\infrastructure.role = .nploy\roles\infrastructure.role
+		.nploy\roles\tools-packages.role = .nploy\roles\tools-packages.role
+		.nploy\roles\webserver.role = .nploy\roles\webserver.role
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Environments", "Environments", "{1C62F63C-701A-4BE9-BE4F-45EA522B7C99}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ci", "ci", "{F9579CAF-EADC-4ADA-9374-9E992751B0C2}"
+	ProjectSection(SolutionItems) = preProject
+		.nploy\environments\ci\env.prop = .nploy\environments\ci\env.prop
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "default", "default", "{BE5047E4-3DD2-4A37-9A6D-607F90C22FB9}"
+	ProjectSection(SolutionItems) = preProject
+		.nploy\environments\default\env.prop = .nploy\environments\default\env.prop
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dev", "dev", "{E2A1E0AA-3FF3-409C-BD9B-6DB2B4494D50}"
+	ProjectSection(SolutionItems) = preProject
+		.nploy\environments\dev\env.prop = .nploy\environments\dev\env.prop
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,5 +88,12 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{25460608-6047-47E0-8CC5-66DEF286D207} = {5C4F3477-8A16-4840-BC99-470D488FC704}
+		{1C62F63C-701A-4BE9-BE4F-45EA522B7C99} = {5C4F3477-8A16-4840-BC99-470D488FC704}
+		{F9579CAF-EADC-4ADA-9374-9E992751B0C2} = {1C62F63C-701A-4BE9-BE4F-45EA522B7C99}
+		{BE5047E4-3DD2-4A37-9A6D-607F90C22FB9} = {1C62F63C-701A-4BE9-BE4F-45EA522B7C99}
+		{E2A1E0AA-3FF3-409C-BD9B-6DB2B4494D50} = {1C62F63C-701A-4BE9-BE4F-45EA522B7C99}
 	EndGlobalSection
 EndGlobal

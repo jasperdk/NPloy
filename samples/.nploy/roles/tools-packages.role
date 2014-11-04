@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <packages subFolder="tools">
-	<package id="FluentMigrator.Tools" />
+	<package id="FluentMigrator.Tools" version="1.3.0.0" />
 </packages>
 

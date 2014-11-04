@@ -34,7 +34,7 @@ namespace NPloy.Support
         {
             var packageSourcesArgument = "";
             if (!string.IsNullOrEmpty(packageSources))
-                packageSourcesArgument = @"-Source " + packageSources + "";
+                packageSourcesArgument = @"-Source """ + packageSources + @"""";
 
             var outputDirectoryArgument = "";
             if (!string.IsNullOrEmpty(workingDirectory))
@@ -54,6 +54,7 @@ namespace NPloy.Support
             var script = string.Format(@"install {0} {1} {2} {3} {4}", package, outputDirectoryArgument,
                                        packageSourcesArgument,
                                        versionArgument, prereleaseFlag);
+            Console.WriteLine("Nuget script: {0}" , script);
             var strOutput = _commandRunner.RunCommand(nugetFile, script, workingDirectory);
 
             var matches = Regex.Matches(strOutput, @"Successfully installed '([^']*)'\.", RegexOptions.CultureInvariant);

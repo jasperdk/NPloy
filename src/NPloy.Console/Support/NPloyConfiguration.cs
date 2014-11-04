@@ -112,6 +112,8 @@ namespace NPloy.Support
                 foreach (var line in lines)
                 {
                     var items = line.Split('=');
+                    if (string.IsNullOrEmpty(line.Trim()))
+                        continue;
                     var key = items[0].Replace(".", "");
                     var value = line.Remove(0, items[0].Length + 1);
                     result[key] = value;

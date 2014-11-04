@@ -70,7 +70,9 @@
     <None Include="App_Install\Uninstall.ps1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="connectionStrings.config" />
+    <None Include="connectionStrings.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="local.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

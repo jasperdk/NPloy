@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <node environment="dev">
 	<roles>
-		<role name="service-packages.role" />
-		<!--<role name="tools-packages.role" />-->
-		<!--<role name="web-packages.role" />-->
+    <role name="tools-packages.role" />
+    <role name="appserver.role" />
+    <role name="webserver.role" />
 	</roles>
 </node>

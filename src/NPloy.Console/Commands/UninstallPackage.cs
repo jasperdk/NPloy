@@ -38,6 +38,8 @@ namespace NPloy.Commands
                 SetDefaultOptionValues();
                 Console.WriteLine("Uninstall package: " + Package);
 
+                //TODO: Stop before uninstall
+
                 var applicationPath = Path.Combine(WorkingDirectory, Package);
 
                 var uninstallScript = applicationPath + @"\App_Install\Uninstall.ps1";
